@@ -11,15 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\gametest3d.c" />
-    <ClCompile Include="..\src\graphics3d.c" />
-    <ClCompile Include="..\src\shader.c" />
-    <ClCompile Include="..\src\simple_logger.c" />
+    <ClCompile Include="..\src\gametest3d.cpp" />
+    <ClCompile Include="..\src\graphics3d.cpp" />
+    <ClCompile Include="..\src\shader.cpp" />
+    <ClCompile Include="..\src\simple_logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\graphics3d.h" />
     <ClInclude Include="..\include\shader.h" />
     <ClInclude Include="..\include\simple_logger.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\fs1.glsl" />
+    <None Include="shaders\vs1.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C8351047-707B-4D68-A801-6749E9509337}</ProjectGuid>
@@ -30,7 +34,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -50,13 +54,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\mtl23\Desktop\IT485\include;C:\Libraries\glew-1.12.0\include;C:\Libraries\SDL2-2.0.3\include;C:\Users\Bo\Desktop\gametest3d\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;C:\Libraries\glew-1.12.0\include;C:\Libraries\SDL2-2.0.3\include;C:\Users\Bo\Desktop\gametest3d\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\mtl23\Desktop\IT485\lib;C:\Libraries\glew-1.12.0\lib\Release\Win32;C:\Libraries\SDL2-2.0.3\lib\x86;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\..</OutDir>
     <IntDir>$(ProjectDir)\..</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\mtl23\Desktop\IT485\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>C:\Users\mtl23\Desktop\IT485\glew-2.0.0\lib\Release\Win32;C:\Users\mtl23\Desktop\IT485\lib;$(LibraryPath)</LibraryPath>
