@@ -1,7 +1,8 @@
 #version 400
-smooth in vec4 theColor;
-out vec4 outputColor;
-void main()
-{
-	outputColor = theColor;
-}
+// Interpolated values from the vertex shaders
+in vec3 fragmentColor;
+// Ouput data
+out vec3 color;
+void main(){
+		color = fragmentColor;
+};

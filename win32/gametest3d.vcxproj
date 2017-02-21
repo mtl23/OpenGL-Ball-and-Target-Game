@@ -15,11 +15,15 @@
     <ClCompile Include="..\src\graphics3d.cpp" />
     <ClCompile Include="..\src\shader.cpp" />
     <ClCompile Include="..\src\simple_logger.cpp" />
+    <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\graphics3d.h" />
     <ClInclude Include="..\include\shader.h" />
     <ClInclude Include="..\include\simple_logger.h" />
+    <ClInclude Include="maxtrix.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="vector.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fs1.glsl" />
