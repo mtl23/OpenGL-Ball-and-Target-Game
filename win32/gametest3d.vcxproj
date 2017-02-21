@@ -15,15 +15,13 @@
     <ClCompile Include="..\src\graphics3d.cpp" />
     <ClCompile Include="..\src\shader.cpp" />
     <ClCompile Include="..\src\simple_logger.cpp" />
-    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="..\src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\graphics3d.h" />
     <ClInclude Include="..\include\shader.h" />
     <ClInclude Include="..\include\simple_logger.h" />
-    <ClInclude Include="maxtrix.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="vector.h" />
+    <ClInclude Include="..\include\texture.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fs1.glsl" />
@@ -58,13 +56,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\include;C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;C:\Libraries\glew-1.12.0\include;C:\Libraries\SDL2-2.0.3\include;C:\Users\Bo\Desktop\gametest3d\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\mtl23\Desktop\IT485\gametest3d-master\include;C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\include;C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;C:\Libraries\glew-1.12.0\include;C:\Libraries\SDL2-2.0.3\include;C:\Users\Bo\Desktop\gametest3d\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\mtl23\Desktop\IT485\lib;C:\Libraries\glew-1.12.0\lib\Release\Win32;C:\Libraries\SDL2-2.0.3\lib\x86;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\..</OutDir>
     <IntDir>$(ProjectDir)\..</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\include;C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\mtl23\Desktop\IT485\gametest3d-master\include;C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\include;C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\lib-vc2012;C:\Users\mtl23\Desktop\IT485\glew-2.0.0\lib\Release\Win32;C:\Users\mtl23\Desktop\IT485\lib;$(LibraryPath)</LibraryPath>

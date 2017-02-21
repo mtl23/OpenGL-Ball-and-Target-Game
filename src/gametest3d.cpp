@@ -30,13 +30,13 @@ using namespace glm;
 #include "simple_logger.h"
 #include "graphics3d.h"
 #include "shader.h"
-
+#include "texture.hpp"
 int main(int argc, char *argv[])
 {
     GLuint vao;
    // GLuint triangleBufferObject;
 	GLuint VerteciesBufferObject;
-	GLuint ColorsBufferObject;
+	GLuint UVBufferObject;
     char bGameLoopRunning = 1;
     SDL_Event e;
 
@@ -56,7 +56,6 @@ int main(int argc, char *argv[])
 	// Our ModelViewProjection : multiplication of our 3 matrices
 	glm::mat4 MVP        = Projection * View * Model; // Remember, matrix multiplication is the other way around
  
-	// Create and compile our GLSL program from the shaders
 
 
     const float vertexVertices[] = {
@@ -98,6 +97,47 @@ int main(int argc, char *argv[])
 		 1.0f,-1.0f, 1.0f,
 
 	};
+
+	// Two UV coordinatesfor each vertex. They were created withe Blender.
+	static const GLfloat g_uv_buffer_data[] = { 
+		0.000059f, 1.0f-0.000004f, 
+		0.000103f, 1.0f-0.336048f, 
+		0.335973f, 1.0f-0.335903f, 
+		1.000023f, 1.0f-0.000013f, 
+		0.667979f, 1.0f-0.335851f, 
+		0.999958f, 1.0f-0.336064f, 
+		0.667979f, 1.0f-0.335851f, 
+		0.336024f, 1.0f-0.671877f, 
+		0.667969f, 1.0f-0.671889f, 
+		1.000023f, 1.0f-0.000013f, 
+		0.668104f, 1.0f-0.000013f, 
+		0.667979f, 1.0f-0.335851f, 
+		0.000059f, 1.0f-0.000004f, 
+		0.335973f, 1.0f-0.335903f, 
+		0.336098f, 1.0f-0.000071f, 
+		0.667979f, 1.0f-0.335851f, 
+		0.335973f, 1.0f-0.335903f, 
+		0.336024f, 1.0f-0.671877f, 
+		1.000004f, 1.0f-0.671847f, 
+		0.999958f, 1.0f-0.336064f, 
+		0.667979f, 1.0f-0.335851f, 
+		0.668104f, 1.0f-0.000013f, 
+		0.335973f, 1.0f-0.335903f, 
+		0.667979f, 1.0f-0.335851f, 
+		0.335973f, 1.0f-0.335903f, 
+		0.668104f, 1.0f-0.000013f, 
+		0.336098f, 1.0f-0.000071f, 
+		0.000103f, 1.0f-0.336048f, 
+		0.000004f, 1.0f-0.671870f, 
+		0.336024f, 1.0f-0.671877f, 
+		0.000103f, 1.0f-0.336048f, 
+		0.336024f, 1.0f-0.671877f, 
+		0.335973f, 1.0f-0.335903f, 
+		0.667969f, 1.0f-0.671889f, 
+		1.000004f, 1.0f-0.671847f, 
+		0.667979f, 1.0f-0.335851f
+	};
+
 	const float colorVertices[] = {
 		0.583f,  0.771f,  0.014f,
 		0.609f,  0.115f,  0.436f,
@@ -148,11 +188,15 @@ glEnable(GL_DEPTH_TEST);
 // Accept fragment if it closer to the camera than the former one
 glDepthFunc(GL_LESS);
 
-      //Get a refrence to our shaders
+    //Get a refrence to our shaders
 	GLuint programID = graphics3d_get_shader_program();
-
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+	GLuint Texture = loadBMP_custom("uvtemplate.bmp");
+	//GLuint Texture = loadDDS("uvtemplate.DDS");
+	// Get a handle for our "myTextureSampler" uniform
+	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
+
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao); //make our vertex array object, we need it to restore state we set after binding it. Re-binding reloads the state associated with it.
@@ -162,9 +206,9 @@ glDepthFunc(GL_LESS);
 	glBindBuffer(GL_ARRAY_BUFFER, VerteciesBufferObject); //we're "using" this one now
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertexVertices), vertexVertices, GL_STATIC_DRAW); //formatting the data for the buffer
 	
-	glGenBuffers(1, &ColorsBufferObject); //create the buffer #2
-	glBindBuffer(GL_ARRAY_BUFFER, ColorsBufferObject); //we're "using" this one now #2
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colorVertices), colorVertices, GL_STATIC_DRAW); //formatting the data for the buffer #2
+	glGenBuffers(1, &UVBufferObject); //create the buffer #2
+	glBindBuffer(GL_ARRAY_BUFFER, UVBufferObject); //we're "using" this one now #2
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW); //formatting the data for the buffer #2
     
 	glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind any buffers
     
@@ -190,16 +234,20 @@ glDepthFunc(GL_LESS);
 		// in the "MVP" uniform
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
+		// Bind our texture in Texture Unit 0
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Texture);
+		// Set our "myTextureSampler" sampler to user Texture Unit 0
+		glUniform1i(TextureID, 0);
 
         glEnableVertexAttribArray(0); //0 is our index, refer to "location = 0" in the vertex shader
         glBindBuffer(GL_ARRAY_BUFFER, VerteciesBufferObject); //bind the buffer we're applying attributes to
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0); //tell gl (shader!) how to interpret our vertex data
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); //tell gl (shader!) how to interpret our vertex data
         
 
 		glEnableVertexAttribArray(1); //attribute 1 is for vertex color data
-        glBindBuffer(GL_ARRAY_BUFFER, ColorsBufferObject); //bind the buffer we're applying attributes to
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); //color data is 48 bytes in to the array
-        
+        glBindBuffer(GL_ARRAY_BUFFER, UVBufferObject); //bind the buffer we're applying attributes to
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);         
 		glDrawArrays(GL_TRIANGLES, 0, 12*3);
         
         glDisableVertexAttribArray(0);
