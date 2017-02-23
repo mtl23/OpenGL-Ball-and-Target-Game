@@ -27,10 +27,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 #include <iostream>
+#include "glm/gtc/type_ptr.hpp"
 #include "simple_logger.h"
 #include "graphics3d.h"
 #include "shader.h"
 #include "texture.hpp"
+#include "controls.hpp"
+
 int main(int argc, char *argv[])
 {
     GLuint vao;
@@ -39,7 +42,7 @@ int main(int argc, char *argv[])
 	GLuint UVBufferObject;
     char bGameLoopRunning = 1;
     SDL_Event e;
-
+	
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
 	// Or, for an ortho camera :
@@ -56,6 +59,9 @@ int main(int argc, char *argv[])
 	// Our ModelViewProjection : multiplication of our 3 matrices
 	glm::mat4 MVP        = Projection * View * Model; // Remember, matrix multiplication is the other way around
  
+
+
+
 
 
     const float vertexVertices[] = {
@@ -222,18 +228,34 @@ glDepthFunc(GL_LESS);
                 bGameLoopRunning = 0;
             else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)
                 bGameLoopRunning = 0;
-        }
+        
+			
+		}
 
         glClearColor(0.0,0.0,0.4,0.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+
+
+
         /* drawing code in here! */
         glUseProgram(graphics3d_get_shader_program());
-		
+
+
+		computeMatricesFromInputs();
+		glm::mat4 ProjectionMatrix = getProjectionMatrix();
+		glm::mat4 ViewMatrix = getViewMatrix();
+		glm::mat4 ModelMatrix = glm::mat4(1.0);
+		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+
+
+
+
 		// Send our transformation to the currently bound shader, 
 		// in the "MVP" uniform
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
+		
 		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Texture);
@@ -244,7 +266,6 @@ glDepthFunc(GL_LESS);
         glBindBuffer(GL_ARRAY_BUFFER, VerteciesBufferObject); //bind the buffer we're applying attributes to
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0); //tell gl (shader!) how to interpret our vertex data
         
-
 		glEnableVertexAttribArray(1); //attribute 1 is for vertex color data
         glBindBuffer(GL_ARRAY_BUFFER, UVBufferObject); //bind the buffer we're applying attributes to
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);         
