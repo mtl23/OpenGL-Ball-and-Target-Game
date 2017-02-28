@@ -29,8 +29,8 @@ float verticalAngle = 0.0f;
 // Initial Field of View
 float initialFoV = 45.0f;
 extern  SDL_Window  * __graphics3d_window = NULL;
-float speed = 3.0f; // 3 units / second
-float mouseSpeed = 0.009f; 
+float speed = .50f; // 3 units / second
+float mouseSpeed = 0.005f; 
 SDL_Event i;
 
 
@@ -52,7 +52,7 @@ void computeMatricesFromInputs(){
 	// Reset mouse position for next frame
 	int DeltaX = xpos - HalfScreenX;
 	int DeltaY = ypos - HalfScreenY;
-	// SDL_ShowCursor(SDL_DISABLE);
+	SDL_ShowCursor(SDL_DISABLE);
 	SDL_WarpMouseInWindow(__graphics3d_window,HalfScreenX,HalfScreenY);
 
 	// Compute new orientation
@@ -80,35 +80,32 @@ void computeMatricesFromInputs(){
 	if ( SDL_PollEvent(&i) ) 
         {
 
-if (i.type == SDL_KEYDOWN)
+if (i.type == SDL_KEYUP|| SDL_KEYDOWN)
 			{
 				switch (i.key.keysym.sym)
 				{
 				case (SDLK_w):
-				position -= glm::normalize (glm::cross (right,up))*speed;
+				//position -= glm::normalize (glm::cross (right,up))*speed* deltaTime;
+					position += (direction*speed);
 				slog("w");
 				break;
 				
-	
 				case (SDLK_s):
-				position += glm::normalize (glm::cross (right,up))*speed;	
+				//position += glm::normalize (glm::cross (right,up))*speed* deltaTime;	
+					position-= (direction *speed);
 				slog("s");
 				break;
-	
 
 				case (SDLK_d):
-				position += speed * right;
+					position += (speed * right);
 				slog("d");
 				break;
 				
 				case(SDLK_a):
-				position -= speed * right;
+				position -= (speed * right);
 				slog("a");
-					break;
-				
-					
+					break;				
 				}
-				
 				
 			}
 
@@ -125,5 +122,5 @@ if (i.type == SDL_KEYDOWN)
 
 	// For the next frame, the "last time" will be "now"
 	lastTime = currentTime;
-}
+	}
 }

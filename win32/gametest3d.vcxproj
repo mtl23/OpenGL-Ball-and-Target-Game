@@ -14,6 +14,7 @@
     <ClCompile Include="..\src\controls.cpp" />
     <ClCompile Include="..\src\gametest3d.cpp" />
     <ClCompile Include="..\src\graphics3d.cpp" />
+    <ClCompile Include="..\src\objloader.cpp" />
     <ClCompile Include="..\src\shader.cpp" />
     <ClCompile Include="..\src\simple_logger.cpp" />
     <ClCompile Include="..\src\texture.cpp" />
@@ -21,6 +22,7 @@
   <ItemGroup>
     <ClInclude Include="..\include\controls.hpp" />
     <ClInclude Include="..\include\graphics3d.h" />
+    <ClInclude Include="..\include\objloader.hpp" />
     <ClInclude Include="..\include\shader.h" />
     <ClInclude Include="..\include\simple_logger.h" />
     <ClInclude Include="..\include\texture.hpp" />
