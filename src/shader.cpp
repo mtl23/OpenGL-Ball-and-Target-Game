@@ -1,101 +1,110 @@
-#include "shader.h"
-#include "simple_logger.h"
 #include <stdio.h>
+#include <string>
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+using namespace std;
 
-GLuint BuildShaderProgram(const char *vsPath, const char *fsPath)
-{
-    GLint infoLogLength;
-    GLuint vertexShader;
-    GLuint fragmentShader;
-    GLuint tempProgram;
-    GLint status;
-    GLchar strInfoLog[4096];
-    
-    vertexShader = CreateShader(GL_VERTEX_SHADER, vsPath);
-    fragmentShader = CreateShader(GL_FRAGMENT_SHADER, fsPath);
-        
-    tempProgram = glCreateProgram();
-    
-    glAttachShader(tempProgram, vertexShader);
-    glAttachShader(tempProgram, fragmentShader);
-    
-    glLinkProgram(tempProgram);
-    
-    glGetProgramiv(tempProgram, GL_LINK_STATUS, &status);
-    if (status == GL_FALSE)
-    {
-        glGetProgramiv(tempProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
-        
-        glGetProgramInfoLog(tempProgram, infoLogLength, NULL, strInfoLog);
-        
-        slog("Shader linker failure: %s", strInfoLog);
-        return 0;
-    }
-    
-    glDetachShader(tempProgram, vertexShader);
-    glDetachShader(tempProgram, fragmentShader);
-    
-    return tempProgram;
+#include <stdlib.h>
+#include <string.h>
+
+#include <GL/glew.h>
+
+#include "shader.hpp"
+
+GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path){
+
+	// Create the shaders
+	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+
+	// Read the Vertex Shader code from the file
+	std::string VertexShaderCode;
+	std::ifstream VertexShaderStream(vertex_file_path, std::ios::in);
+	if(VertexShaderStream.is_open()){
+		std::string Line = "";
+		while(getline(VertexShaderStream, Line))
+			VertexShaderCode += "\n" + Line;
+		VertexShaderStream.close();
+	}else{
+		printf("Impossible to open %s. Are you in the right directory ? Don't forget to read the FAQ !\n", vertex_file_path);
+		getchar();
+		return 0;
+	}
+
+	// Read the Fragment Shader code from the file
+	std::string FragmentShaderCode;
+	std::ifstream FragmentShaderStream(fragment_file_path, std::ios::in);
+	if(FragmentShaderStream.is_open()){
+		std::string Line = "";
+		while(getline(FragmentShaderStream, Line))
+			FragmentShaderCode += "\n" + Line;
+		FragmentShaderStream.close();
+	}
+
+	GLint Result = GL_FALSE;
+	int InfoLogLength;
+
+
+	// Compile Vertex Shader
+	printf("Compiling shader : %s\n", vertex_file_path);
+	char const * VertexSourcePointer = VertexShaderCode.c_str();
+	glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
+	glCompileShader(VertexShaderID);
+
+	// Check Vertex Shader
+	glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
+	glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if ( InfoLogLength > 0 ){
+		std::vector<char> VertexShaderErrorMessage(InfoLogLength+1);
+		glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+		printf("%s\n", &VertexShaderErrorMessage[0]);
+	}
+
+
+
+	// Compile Fragment Shader
+	printf("Compiling shader : %s\n", fragment_file_path);
+	char const * FragmentSourcePointer = FragmentShaderCode.c_str();
+	glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer , NULL);
+	glCompileShader(FragmentShaderID);
+
+	// Check Fragment Shader
+	glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
+	glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if ( InfoLogLength > 0 ){
+		std::vector<char> FragmentShaderErrorMessage(InfoLogLength+1);
+		glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+		printf("%s\n", &FragmentShaderErrorMessage[0]);
+	}
+
+
+
+	// Link the program
+	printf("Linking program\n");
+	GLuint ProgramID = glCreateProgram();
+	glAttachShader(ProgramID, VertexShaderID);
+	glAttachShader(ProgramID, FragmentShaderID);
+	glLinkProgram(ProgramID);
+
+	// Check the program
+	glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
+	glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if ( InfoLogLength > 0 ){
+		std::vector<char> ProgramErrorMessage(InfoLogLength+1);
+		glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+		printf("%s\n", &ProgramErrorMessage[0]);
+	}
+
+	
+	glDetachShader(ProgramID, VertexShaderID);
+	glDetachShader(ProgramID, FragmentShaderID);
+	
+	glDeleteShader(VertexShaderID);
+	glDeleteShader(FragmentShaderID);
+
+	return ProgramID;
 }
 
-GLuint CreateShader(GLenum eShaderType, const char *strShaderFile)
-{
-    char shaderSource[4096];
-    char inChar;
-    FILE *shaderFile;
-    int i = 0;
-    GLuint shader;
-    GLint status;
-    GLint infoLogLength;
-    GLchar strInfoLog[4096];
-    char strShaderType[16];
-    const char *ss;
-    
-    shaderFile = fopen(strShaderFile, "r");
-    if (!shaderFile)
-    {
-        slog("failed to open shader file: %s",strShaderFile);
-        return 0;
-    }
-    while(fscanf(shaderFile,"%c",&inChar) > 0)
-    {
-        shaderSource[i++] = inChar; //loading the file's chars into array
-    }
-    shaderSource[i - 1] = '\0';
-    fclose(shaderFile);
-    
-    shader = glCreateShader(eShaderType);
-    ss = shaderSource;
-    glShaderSource(shader, 1, &ss, NULL);
-    
-    glCompileShader(shader);
-    
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-    if (status == GL_FALSE)
-    {
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
-        
-        glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
-        
-        switch(eShaderType)
-        {
-            case GL_VERTEX_SHADER:
-                sprintf(strShaderType, "vertex");
-                break;
-            case GL_GEOMETRY_SHADER:
-                sprintf(strShaderType, "geometry");
-                break;
-            case GL_FRAGMENT_SHADER:
-                sprintf(strShaderType, "fragment");
-                break;
-        }
-        
-        slog("Compile failure in %s shader:\n%s", strShaderType, strInfoLog);
-        return 0;
-    }
-    
-    return shader;
-}
 
-
-/*eol@eof*/

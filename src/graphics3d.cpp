@@ -76,7 +76,7 @@ int graphics3d_init(int sw,int sh,int fullscreen,const char *project,Uint32 fram
     }
     
     
-    __graphics3d_shader_program = BuildShaderProgram("shaders/vs1.glsl", "shaders/fs1.glsl");
+    //__graphics3d_shader_program = BuildShaderProgram("shaders/vs1.glsl", "shaders/fs1.glsl");
     if (__graphics3d_shader_program == -1)
     {
         return -1;

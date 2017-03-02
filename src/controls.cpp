@@ -1,13 +1,13 @@
 // Include GLFW
 #include <glfw3.h>
+extern GLFWwindow* window; // The "extern" keyword here is to access the variable "window" declared in tutorialXXX.cpp. This is a hack to keep the tutorials simple. Please avoid this.
 
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
-#include <SDL.h>
+
 #include "controls.hpp"
-#include "simple_logger.h"
 
 glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
@@ -28,32 +28,27 @@ float horizontalAngle = 3.14f;
 float verticalAngle = 0.0f;
 // Initial Field of View
 float initialFoV = 45.0f;
-extern  SDL_Window  * __graphics3d_window = NULL;
-float speed = .50f; // 3 units / second
-float mouseSpeed = 0.005f; 
-SDL_Event i;
+
+float speed = 3.0f; // 3 units / second
+float mouseSpeed = 0.005f;
+
 
 
 void computeMatricesFromInputs(){
 
-	
-	static double lastTime = 0;
+	// glfwGetTime is called only once, the first time this function is called
+	static double lastTime = glfwGetTime();
 
 	// Compute time difference between current and last frame
-	double currentTime = SDL_GetTicks();
+	double currentTime = glfwGetTime();
 	float deltaTime = float(currentTime - lastTime);
 
 	// Get mouse position
-	int  xpos;
-	int  ypos;
-	SDL_GetMouseState( &xpos, &ypos );
-	int HalfScreenX = 512;
-	int HalfScreenY = 384;
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+
 	// Reset mouse position for next frame
-	int DeltaX = xpos - HalfScreenX;
-	int DeltaY = ypos - HalfScreenY;
-	SDL_ShowCursor(SDL_DISABLE);
-	SDL_WarpMouseInWindow(__graphics3d_window,HalfScreenX,HalfScreenY);
+	glfwSetCursorPos(window, 1024/2, 768/2);
 
 	// Compute new orientation
 	horizontalAngle += mouseSpeed * float(1024/2 - xpos );
@@ -76,41 +71,25 @@ void computeMatricesFromInputs(){
 	// Up vector
 	glm::vec3 up = glm::cross( right, direction );
 
+	// Move forward
+	if (glfwGetKey( window, GLFW_KEY_UP ) == GLFW_PRESS){
+		position += direction * deltaTime * speed;
+	}
+	// Move backward
+	if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
+		position -= direction * deltaTime * speed;
+	}
+	// Strafe right
+	if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS){
+		position += right * deltaTime * speed;
+	}
+	// Strafe left
+	if (glfwGetKey( window, GLFW_KEY_LEFT ) == GLFW_PRESS){
+		position -= right * deltaTime * speed;
+	}
 
-	if ( SDL_PollEvent(&i) ) 
-        {
-
-if (i.type == SDL_KEYUP|| SDL_KEYDOWN)
-			{
-				switch (i.key.keysym.sym)
-				{
-				case (SDLK_w):
-				//position -= glm::normalize (glm::cross (right,up))*speed* deltaTime;
-					position += (direction*speed);
-				slog("w");
-				break;
-				
-				case (SDLK_s):
-				//position += glm::normalize (glm::cross (right,up))*speed* deltaTime;	
-					position-= (direction *speed);
-				slog("s");
-				break;
-
-				case (SDLK_d):
-					position += (speed * right);
-				slog("d");
-				break;
-				
-				case(SDLK_a):
-				position -= (speed * right);
-				slog("a");
-					break;				
-				}
-				
-			}
-
-	
 	float FoV = initialFoV;
+
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 100.0f);
 	// Camera matrix
@@ -122,5 +101,4 @@ if (i.type == SDL_KEYUP|| SDL_KEYDOWN)
 
 	// For the next frame, the "last time" will be "now"
 	lastTime = currentTime;
-	}
 }
