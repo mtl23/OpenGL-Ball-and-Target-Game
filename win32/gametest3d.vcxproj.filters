@@ -36,6 +36,15 @@
     <ClCompile Include="..\src\objloader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\vboindexer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\text2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quaternion_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\shader.h">
@@ -56,6 +65,15 @@
     <ClInclude Include="..\include\shader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vboindexer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\text2D.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\quaternion_utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fs1.glsl">
@@ -64,16 +82,13 @@
     <None Include="shaders\vs1.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="shaders\SimpleVertexShader.vertexshader">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shaders\SimpleFragmentShader.fragmentshader">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="shaders\TransformVertexShader.vertexshader">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="shaders\TextureFragmentShader.fragmentshader">
+    <None Include="shaders\StandardTransparentShading.fragmentshader">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\StandardShading.vertexshader">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

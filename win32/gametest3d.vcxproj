@@ -14,23 +14,28 @@
     <ClCompile Include="..\src\controls.cpp" />
     <ClCompile Include="..\src\gametest3d.cpp" />
     <ClCompile Include="..\src\objloader.cpp" />
+    <ClCompile Include="..\src\quaternion_utils.cpp" />
     <ClCompile Include="..\src\shader.cpp" />
     <ClCompile Include="..\src\simple_logger.cpp" />
+    <ClCompile Include="..\src\text2D.cpp" />
     <ClCompile Include="..\src\texture.cpp" />
+    <ClCompile Include="..\src\vboindexer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\controls.hpp" />
     <ClInclude Include="..\include\objloader.hpp" />
+    <ClInclude Include="..\include\quaternion_utils.hpp" />
     <ClInclude Include="..\include\shader.h" />
     <ClInclude Include="..\include\shader.hpp" />
     <ClInclude Include="..\include\simple_logger.h" />
+    <ClInclude Include="..\include\text2D.hpp" />
     <ClInclude Include="..\include\texture.hpp" />
+    <ClInclude Include="..\include\vboindexer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fs1.glsl" />
-    <None Include="shaders\SimpleFragmentShader.fragmentshader" />
-    <None Include="shaders\SimpleVertexShader.vertexshader" />
-    <None Include="shaders\TextureFragmentShader.fragmentshader" />
+    <None Include="shaders\StandardShading.vertexshader" />
+    <None Include="shaders\StandardTransparentShading.fragmentshader" />
     <None Include="shaders\TransformVertexShader.vertexshader" />
     <None Include="shaders\vs1.glsl" />
   </ItemGroup>
@@ -96,7 +101,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;SDL2_mixer.lib;opengl32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;SDL2_mixer.lib;opengl32.lib;glew32.lib;glfw3.lib;AntTweakBar.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
