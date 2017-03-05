@@ -11,10 +11,12 @@
 GLFWwindow* window;
 
 // Include GLM
-#include <glm/gtc/quaternion.hpp> 
-#include <glm/gtx/quaternion.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/gtx/norm.hpp>
 using namespace glm;
 
 #include <AntTweakBar.h>
@@ -25,12 +27,19 @@ using namespace glm;
 #include "objloader.hpp"
 #include "vboindexer.hpp"
 #include "text2D.hpp";
+#include "quaternion_utils.hpp"
 
-vec3 gPosition1(-1.5f, 0.0f, 0.0f);
+
+//0, 20, 37
+
+vec3 gPosition1(-5.5f, 5.0f, 7.0f);
 vec3 gOrientation1;
  
-vec3 gPosition2( 1.5f, 0.0f, 0.0f);
+vec3 gPosition2( 15.5f, 0.0f, 7.0f);
 quat gOrientation2;
+
+vec3 gPosition3( .5f, 2.0f, 7.0f);
+quat gOrientation3;
  
 bool gLookAtOther = true;
 // The ARB_debug_output extension, which is used in this tutorial as an example,
@@ -112,24 +121,24 @@ int main( void )
 	}
 
 	// Initialize the GUI
-	//TwInit(TW_OPENGL_CORE, NULL);
-	//TwWindowSize(1024, 768);
-	//TwBar * EulerGUI = TwNewBar("Euler settings");
-	//TwBar * QuaternionGUI = TwNewBar("Quaternion settings");
-	//TwSetParam(EulerGUI, NULL, "refresh", TW_PARAM_CSTRING, 1, "0.1");
-	//TwSetParam(QuaternionGUI, NULL, "position", TW_PARAM_CSTRING, 1, "808 16");
+	TwInit(TW_OPENGL_CORE, NULL);
+	TwWindowSize(1024, 768);
+	TwBar * EulerGUI = TwNewBar("Euler settings");
+	TwBar * QuaternionGUI = TwNewBar("Quaternion settings");
+	TwSetParam(EulerGUI, NULL, "refresh", TW_PARAM_CSTRING, 1, "0.1");
+	TwSetParam(QuaternionGUI, NULL, "position", TW_PARAM_CSTRING, 1, "808 16");
 
-	//TwAddVarRW(EulerGUI, "Euler X", TW_TYPE_FLOAT, &gOrientation1.x, "step=0.01");
-	//TwAddVarRW(EulerGUI, "Euler Y", TW_TYPE_FLOAT, &gOrientation1.y, "step=0.01");
-	//TwAddVarRW(EulerGUI, "Euler Z", TW_TYPE_FLOAT, &gOrientation1.z, "step=0.01");
-	//TwAddVarRW(EulerGUI, "Pos X"  , TW_TYPE_FLOAT, &gPosition1.x, "step=0.1");
-	//TwAddVarRW(EulerGUI, "Pos Y"  , TW_TYPE_FLOAT, &gPosition1.y, "step=0.1");
-	//TwAddVarRW(EulerGUI, "Pos Z"  , TW_TYPE_FLOAT, &gPosition1.z, "step=0.1");
- //
-	//TwAddVarRW(QuaternionGUI, "Quaternion", TW_TYPE_QUAT4F, &gOrientation2, "showval=true open=true ");
-	//TwAddVarRW(QuaternionGUI, "Use LookAt", TW_TYPE_BOOL8 , &gLookAtOther, "help='Look at the other monkey ?'");
- //
-	//// Set GLFW event callbacks. I removed glfwSetWindowSizeCallback for conciseness
+	TwAddVarRW(EulerGUI, "Euler X", TW_TYPE_FLOAT, &gOrientation1.x, "step=0.01");
+	TwAddVarRW(EulerGUI, "Euler Y", TW_TYPE_FLOAT, &gOrientation1.y, "step=0.01");
+	TwAddVarRW(EulerGUI, "Euler Z", TW_TYPE_FLOAT, &gOrientation1.z, "step=0.01");
+	TwAddVarRW(EulerGUI, "Pos X"  , TW_TYPE_FLOAT, &gPosition1.x, "step=0.1");
+	TwAddVarRW(EulerGUI, "Pos Y"  , TW_TYPE_FLOAT, &gPosition1.y, "step=0.1");
+	TwAddVarRW(EulerGUI, "Pos Z"  , TW_TYPE_FLOAT, &gPosition1.z, "step=0.1");
+ 
+	TwAddVarRW(QuaternionGUI, "Quaternion", TW_TYPE_QUAT4F, &gOrientation2, "showval=true open=true ");
+	TwAddVarRW(QuaternionGUI, "Use LookAt", TW_TYPE_BOOL8 , &gLookAtOther, "help='Look at the other monkey ?'");
+ 
+	// Set GLFW event callbacks. I removed glfwSetWindowSizeCallback for conciseness
 	//glfwSetMouseButtonCallback(window, (GLFWmousebuttonfun)TwEventMouseButtonGLFW); // - Directly redirect GLFW mouse button events to AntTweakBar
 	//glfwSetCursorPosCallback(window, (GLFWcursorposfun)TwEventMousePosGLFW);          // - Directly redirect GLFW mouse position events to AntTweakBar
 	//glfwSetScrollCallback(window, (GLFWscrollfun)TwEventMouseWheelGLFW);    // - Directly redirect GLFW mouse wheel events to AntTweakBar
@@ -172,7 +181,7 @@ int main( void )
 	glDepthFunc(GL_LESS); 
 
 	// Cull triangles which normal is not towards the camera
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
@@ -180,7 +189,7 @@ int main( void )
 
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
-
+		//GLuint programIDTrans = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
@@ -188,15 +197,15 @@ int main( void )
 
 	// Load the texture
 	GLuint Texture = loadDDS("uvmap.DDS");
-	
+	GLuint Texture2 = loadBMP_custom("uvtemplate.bmp");
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
-
+	//GLuint TextureIDTrans  = glGetUniformLocation(programID, "myTextureSamplerTrans");
 	// Read our .obj file
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
-	bool res = loadOBJ("suzanne.obj", vertices, uvs, normals);
+	bool res = loadOBJ("aiai.obj", vertices, uvs, normals);
 
 
 	std::vector<unsigned short> indices;
@@ -228,6 +237,88 @@ int main( void )
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0] , GL_STATIC_DRAW);
 
+//////////////////////////// the stage
+
+	
+	// Read our .obj file
+	std::vector<glm::vec3> vertices2;
+	std::vector<glm::vec2> uvs2;
+	std::vector<glm::vec3> normals2;
+	bool res2 = loadOBJ("model.obj", vertices2, uvs2, normals2);
+
+
+	std::vector<unsigned short> indices2;
+	std::vector<glm::vec3> indexed_vertices2;
+	std::vector<glm::vec2> indexed_uvs2;
+	std::vector<glm::vec3> indexed_normals2;
+	indexVBO(vertices2, uvs2, normals, indices2, indexed_vertices2, indexed_uvs2, indexed_normals2);
+
+	// Load it into a VBO
+
+	GLuint vertexbuffer2;
+	glGenBuffers(1, &vertexbuffer2);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
+	glBufferData(GL_ARRAY_BUFFER, indexed_vertices2.size() * sizeof(glm::vec3), &indexed_vertices2[0], GL_STATIC_DRAW);
+
+	GLuint uvbuffer2;
+	glGenBuffers(1, &uvbuffer2);
+	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer2);
+	glBufferData(GL_ARRAY_BUFFER, indexed_uvs2.size() * sizeof(glm::vec2), &indexed_uvs2[0], GL_STATIC_DRAW);
+
+	GLuint normalbuffer2;
+	glGenBuffers(1, &normalbuffer2);
+	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer2);
+	glBufferData(GL_ARRAY_BUFFER, indexed_normals2.size() * sizeof(glm::vec3), &indexed_normals2[0], GL_STATIC_DRAW);
+
+	// Generate a buffer for the indices as well
+	GLuint elementbuffer2;
+	glGenBuffers(1, &elementbuffer2);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices2.size() * sizeof(unsigned short), &indices2[0] , GL_STATIC_DRAW);
+
+
+	///////////////
+
+
+	//////////////////////////// the ball
+
+	
+	// Read our .obj file
+	std::vector<glm::vec3> vertices3;
+	std::vector<glm::vec2> uvs3;
+	std::vector<glm::vec3> normals3;
+	bool res3 = loadOBJ("ballkirby.obj", vertices3, uvs3, normals3);
+
+
+	std::vector<unsigned short> indices3;
+	std::vector<glm::vec3> indexed_vertices3;
+	std::vector<glm::vec2> indexed_uvs3;
+	std::vector<glm::vec3> indexed_normals3;
+	indexVBO(vertices3, uvs3, normals, indices3, indexed_vertices3, indexed_uvs3, indexed_normals3);
+
+	// Load it into a VBO
+
+	GLuint vertexbuffer3;
+	glGenBuffers(1, &vertexbuffer3);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
+	glBufferData(GL_ARRAY_BUFFER, indexed_vertices3.size() * sizeof(glm::vec3), &indexed_vertices3[0], GL_STATIC_DRAW);
+
+	GLuint uvbuffer3;
+	glGenBuffers(1, &uvbuffer3);
+	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer3);
+	glBufferData(GL_ARRAY_BUFFER, indexed_uvs3.size() * sizeof(glm::vec2), &indexed_uvs3[0], GL_STATIC_DRAW);
+
+	GLuint normalbuffer3;
+	glGenBuffers(1, &normalbuffer3);
+	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer3);
+	glBufferData(GL_ARRAY_BUFFER, indexed_normals3.size() * sizeof(glm::vec3), &indexed_normals3[0], GL_STATIC_DRAW);
+
+	// Generate a buffer for the indices as well
+	GLuint elementbuffer3;
+	glGenBuffers(1, &elementbuffer3);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices3.size() * sizeof(unsigned short), &indices3[0] , GL_STATIC_DRAW);
+///////////
 
 	// Get a handle for our "LightPosition" uniform
 	glUseProgram(programID);
@@ -238,6 +329,7 @@ int main( void )
 
 	// For speed computation
 	double lastTime = glfwGetTime();
+	double lastFrameTime = lastTime;
 	int nbFrames = 0;
 	
 	// Enable blending
@@ -249,7 +341,9 @@ int main( void )
 
 		// Measure speed
 		double currentTime = glfwGetTime();
-		nbFrames++;
+		float deltaTime = (float)(currentTime - lastFrameTime); 
+		lastFrameTime = currentTime;
+
 		if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1sec ago
 			// printf and reset
 			//printf("%f ms/frame\n", 1000.0/double(nbFrames));
@@ -262,10 +356,10 @@ int main( void )
 
 	
 
-		// Compute the MVP matrix from keyboard and mouse input
-		computeMatricesFromInputs();
-		glm::mat4 ProjectionMatrix = getProjectionMatrix();
-		glm::mat4 ViewMatrix = getViewMatrix();
+		//// Compute the MVP matrix from keyboard and mouse input
+		//computeMatricesFromInputs();
+		//glm::mat4 ProjectionMatrix = getProjectionMatrix();
+		//glm::mat4 ViewMatrix = getViewMatrix();
 
 			
 		////// Start of the rendering of the first object //////
@@ -273,17 +367,19 @@ int main( void )
 		// Use our shader
 		glUseProgram(programID);
 	
-		glm::vec3 lightPos = glm::vec3(4,4,4);
-		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]); // This one doesn't change between objects, so this can be done once for all objects that use "programID"
+		//glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]); // This one doesn't change between objects, so this can be done once for all objects that use "programID"
 		
-		glm::mat4 ModelMatrix1 = glm::mat4(1.0);
-		glm::mat4 MVP1 = ProjectionMatrix * ViewMatrix * ModelMatrix1;
+				glm::mat4 ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+		glm::mat4 ViewMatrix = glm::lookAt(
+			glm::vec3( 0, 20, 37 ), // Camera is here
+			glm::vec3( 0, 0, 0 ), // and looks here
+			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+		);
 
-		// Send our transformation to the currently bound shader, 
-		// in the "MVP" uniform
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP1[0][0]);
-		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix1[0][0]);
+		//// Send our transformation to the currently bound shader, 
+		//// in the "MVP" uniform
+		//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP1[0][0]);
+		//glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix1[0][0]);
 
 
 		// Bind our texture in Texture Unit 0
@@ -331,79 +427,207 @@ int main( void )
 		// Index buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
 
-		// Draw the triangles !
-		glDrawElements(
-			GL_TRIANGLES,      // mode
-			indices.size(),    // count
-			GL_UNSIGNED_SHORT,   // type
-			(void*)0           // element array buffer offset
-		);
-
-
-
-
-		////// End of rendering of the first object //////
-		////// Start of the rendering of the second object //////
-
-		// In our very specific case, the 2 objects use the same shader.
-		// So it's useless to re-bind the "programID" shader, since it's already the current one.
-		//glUseProgram(programID);
+		glm::vec3 lightPos = glm::vec3(2,5,0);
+		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 		
-		// Similarly : don't re-set the light position and camera matrix in programID,
-		// it's still valid !
-		// *** You would have to do it if you used another shader ! ***
-		//glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-		//glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]); // This one doesn't change between objects, so this can be done once for all objects that use "programID"
 
-		
-		// Again : this is already done, but this only works because we use the same shader.
-		//// Bind our texture in Texture Unit 0
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, Texture);
-		//// Set our "myTextureSampler" sampler to user Texture Unit 0
-		//glUniform1i(TextureID, 0);
-		
-		
-		// BUT the Model matrix is different (and the MVP too)
-		glm::mat4 ModelMatrix2 = glm::mat4(1.0);
-		ModelMatrix2 = glm::translate(ModelMatrix2, glm::vec3(2.0f, 0.0f, 0.0f));
-		glm::mat4 MVP2 = ProjectionMatrix * ViewMatrix * ModelMatrix2;
+{ // Euler
+ 
+			// As an example, rotate arount the vertical axis at 180°/sec
+			gOrientation1.y += 3.14159f/2.0f * deltaTime;
+ 
+			// Build the model matrix
+			glm::mat4 RotationMatrix = eulerAngleYXZ(gOrientation1.y, gOrientation1.x, gOrientation1.z);
+			glm::mat4 TranslationMatrix = translate(mat4(), gPosition1); // A bit to the left
+			glm::mat4 ScalingMatrix = scale(mat4(), vec3(1.0f, 1.0f, 1.0f));
+			glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
+ 
+			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+ 
+			// Send our transformation to the currently bound shader, 
+			// in the "MVP" uniform
+			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+ 
+ 
+ 
+			// Draw the triangles !
+			glDrawElements(
+				GL_TRIANGLES,      // mode
+				indices.size(),    // count
+				GL_UNSIGNED_SHORT,   // type
+				(void*)0           // element array buffer offset
+			);
+ 
+		}
 
-		// Send our transformation to the currently bound shader, 
-		// in the "MVP" uniform
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP2[0][0]);
-		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix2[0][0]);
+////// End of rendering of the first object //////
+
+////// Start of the rendering of the second object //////
 
 
-		// The rest is exactly the same as the first object
-		
-		// 1rst attribute buffer : vertices
+// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
+		glVertexAttribPointer(
+			0,                  // attribute
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
 
 		// 2nd attribute buffer : UVs
 		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer2);
+		glVertexAttribPointer(
+			1,                                // attribute
+			2,                                // size
+			GL_FLOAT,                         // type
+			GL_FALSE,                         // normalized?
+			0,                                // stride
+			(void*)0                          // array buffer offset
+		);
 
 		// 3rd attribute buffer : normals
 		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer2);
+		glVertexAttribPointer(
+			2,                                // attribute
+			3,                                // size
+			GL_FLOAT,                         // type
+			GL_FALSE,                         // normalized?
+			0,                                // stride
+			(void*)0                          // array buffer offset
+		);
 
 		// Index buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
 
-		// Draw the triangles !
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
-
+		glm::vec3 lightPos2 = glm::vec3(-2,4,0);
+		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+{ // Quaternion
+ 
+			// It the box is checked...
+			if (gLookAtOther){
+				vec3 desiredDir = gPosition1-gPosition2;
+				vec3 desiredUp = vec3(0.0f, 1.0f, 0.0f); // +Y
+ 
+				// Compute the desired orientation
+				quat targetOrientation = normalize(LookAt(desiredDir, desiredUp));
+ 
+				// And interpolate
+				gOrientation2 = RotateTowards(gOrientation2, targetOrientation, 1.0f*deltaTime);
+			}
+ 
+			glm::mat4 RotationMatrix = mat4_cast(gOrientation2);
+			glm::mat4 TranslationMatrix = translate(mat4(), gPosition2); // A bit to the right
+			glm::mat4 ScalingMatrix = scale(mat4(), vec3(1.0f, 1.0f, 1.0f));
+			glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
+ 
+			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+ 
+			// Send our transformation to the currently bound shader, 
+			// in the "MVP" uniform
+			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+ 
+ 
+			// Draw the triangles !
+			glDrawElements(
+				GL_TRIANGLES,      // mode
+				indices2.size(),    // count
+				GL_UNSIGNED_SHORT,   // type
+				(void*)0           // element array buffer offset
+			);
+		}
 
 		////// End of rendering of the second object //////
 
+//// Start of rendering of the third object //////
+
+
+			// Bind our texture in Texture Unit 0
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Texture2);
+		// Set our "myTextureSampler" sampler to user Texture Unit 0
+		glUniform1i(TextureID, 0);
+// 1rst attribute buffer : vertices
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
+		glVertexAttribPointer(
+			0,                  // attribute
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+
+		// 2nd attribute buffer : UVs
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer3);
+		glVertexAttribPointer(
+			1,                                // attribute
+			2,                                // size
+			GL_FLOAT,                         // type
+			GL_FALSE,                         // normalized?
+			0,                                // stride
+			(void*)0                          // array buffer offset
+		);
+
+		// 3rd attribute buffer : normals
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer3);
+		glVertexAttribPointer(
+			2,                                // attribute
+			3,                                // size
+			GL_FLOAT,                         // type
+			GL_FALSE,                         // normalized?
+			0,                                // stride
+			(void*)0                          // array buffer offset
+		);
+
+		// Index buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
+
+		glm::vec3 lightPos3 = glm::vec3(0,4,0);
+		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+
+		glm::mat4 RotationMatrix = mat4_cast(gOrientation3);
+			glm::mat4 TranslationMatrix = translate(mat4(), gPosition3); // places into position
+			glm::mat4 ScalingMatrix = scale(mat4(), vec3(.40f, .40f, .40f)); //here we sacle
+			glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
+ 
+			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+ 
+			// Send our transformation to the currently bound shader, 
+			// in the "MVP" uniform
+			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+ 
+ 
+			// Draw the triangles !
+			glDrawElements(
+				GL_TRIANGLES,      // mode
+				indices3.size(),    // count
+				GL_UNSIGNED_SHORT,   // type
+				(void*)0           // element array buffer offset
+			);
+			
+
+
+/////////////////// End of rendering of the second object //////
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
+
+		// Draw GUI
+		TwDraw();
 
 		char text[256];
 		sprintf(text,"%.2f sec", glfwGetTime() );
@@ -430,7 +654,8 @@ int main( void )
 	// Delete the text's VBO, the shader and the texture
 	cleanupText2D();
 
-	// Close OpenGL window and terminate GLFW
+	// Close GUI and OpenGL window, and terminate GLFW
+	TwTerminate();
 	glfwTerminate();
 
 	return 0;

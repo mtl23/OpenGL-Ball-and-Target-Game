@@ -91,5 +91,11 @@
     <None Include="shaders\StandardShading.vertexshader">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="shaders\TextVertexShader.fragmentshader">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\TextVertexShader.vertexshader">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

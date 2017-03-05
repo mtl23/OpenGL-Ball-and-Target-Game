@@ -36,6 +36,8 @@
     <None Include="shaders\fs1.glsl" />
     <None Include="shaders\StandardShading.vertexshader" />
     <None Include="shaders\StandardTransparentShading.fragmentshader" />
+    <None Include="shaders\TextVertexShader.fragmentshader" />
+    <None Include="shaders\TextVertexShader.vertexshader" />
     <None Include="shaders\TransformVertexShader.vertexshader" />
     <None Include="shaders\vs1.glsl" />
   </ItemGroup>
