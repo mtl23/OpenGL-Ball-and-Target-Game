@@ -32,13 +32,13 @@ using namespace glm;
 
 //0, 20, 37
 
-vec3 gPosition1(-5.5f, 5.0f, 7.0f);
+vec3 gPosition1(0.00f, 5.0f, 15.0f); //the monkey
 vec3 gOrientation1;
  
-vec3 gPosition2( 15.5f, 0.0f, 7.0f);
+vec3 gPosition2( 0.0f, 0.0f, -15.0f); // the stage
 quat gOrientation2;
 
-vec3 gPosition3( .5f, 2.0f, 7.0f);
+vec3 gPosition3( 0.0f, 7.0f, 20.0f); // the ball
 quat gOrientation3;
  
 bool gLookAtOther = true;
@@ -278,8 +278,7 @@ int main( void )
 
 
 	///////////////
-
-
+	
 	//////////////////////////// the ball
 
 	
@@ -369,8 +368,8 @@ int main( void )
 	
 		//glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]); // This one doesn't change between objects, so this can be done once for all objects that use "programID"
 		
-				glm::mat4 ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-		glm::mat4 ViewMatrix = glm::lookAt(
+			glm::mat4 ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+			glm::mat4 ViewMatrix = glm::lookAt(
 			glm::vec3( 0, 20, 37 ), // Camera is here
 			glm::vec3( 0, 0, 0 ), // and looks here
 			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
@@ -511,20 +510,20 @@ int main( void )
 { // Quaternion
  
 			// It the box is checked...
-			if (gLookAtOther){
-				vec3 desiredDir = gPosition1-gPosition2;
-				vec3 desiredUp = vec3(0.0f, 1.0f, 0.0f); // +Y
+		//	if (gLookAtOther){
+				// desiredDir = gPosition1-gPosition2;
+				//vec3 desiredUp = vec3(0.0f, 1.0f, 0.0f); // +Y
  
 				// Compute the desired orientation
-				quat targetOrientation = normalize(LookAt(desiredDir, desiredUp));
+			//	quat targetOrientation = normalize(LookAt(desiredDir, desiredUp));
  
 				// And interpolate
-				gOrientation2 = RotateTowards(gOrientation2, targetOrientation, 1.0f*deltaTime);
-			}
- 
+				//gOrientation2 = RotateTowards(gOrientation2, targetOrientation, 1.0f*deltaTime);
+	//		}
+			gOrientation2 = quat(0.71f,0.00f,-0.71f,0.00f); // (S,X,Y,Z)
 			glm::mat4 RotationMatrix = mat4_cast(gOrientation2);
 			glm::mat4 TranslationMatrix = translate(mat4(), gPosition2); // A bit to the right
-			glm::mat4 ScalingMatrix = scale(mat4(), vec3(1.0f, 1.0f, 1.0f));
+			glm::mat4 ScalingMatrix = scale(mat4(), vec3(3.0f, 3.0f, 3.0f));
 			glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
  
 			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
@@ -549,12 +548,12 @@ int main( void )
 
 //// Start of rendering of the third object //////
 
-
-			// Bind our texture in Texture Unit 0
+		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Texture2);
 		// Set our "myTextureSampler" sampler to user Texture Unit 0
 		glUniform1i(TextureID, 0);
+
 // 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
@@ -598,11 +597,11 @@ int main( void )
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		glm::mat4 RotationMatrix = mat4_cast(gOrientation3);
-			glm::mat4 TranslationMatrix = translate(mat4(), gPosition3); // places into position
-			glm::mat4 ScalingMatrix = scale(mat4(), vec3(.40f, .40f, .40f)); //here we sacle
-			glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
+		glm::mat4 TranslationMatrix = translate(mat4(), gPosition3); // places into position
+		glm::mat4 ScalingMatrix = scale(mat4(), vec3(.25f, .25f, .25f)); //here we sacle
+		glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
  
-			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
  
 			// Send our transformation to the currently bound shader, 
 			// in the "MVP" uniform
@@ -619,8 +618,6 @@ int main( void )
 				(void*)0           // element array buffer offset
 			);
 			
-
-
 /////////////////// End of rendering of the second object //////
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
