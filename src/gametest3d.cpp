@@ -426,7 +426,7 @@ int main( void )
 		// Index buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
 
-		glm::vec3 lightPos = glm::vec3(2,5,0);
+		glm::vec3 lightPos = glm::vec3(0,-16,-24);
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 		
 
@@ -505,7 +505,7 @@ int main( void )
 		// Index buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
 
-		glm::vec3 lightPos2 = glm::vec3(-2,4,0);
+		glm::vec3 lightPos2 = glm::vec3(-16,-8,-24);
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 { // Quaternion
  
@@ -593,7 +593,7 @@ int main( void )
 		// Index buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
 
-		glm::vec3 lightPos3 = glm::vec3(0,4,0);
+		glm::vec3 lightPos3 = glm::vec3(16,-8,-24);
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		glm::mat4 RotationMatrix = mat4_cast(gOrientation3);
