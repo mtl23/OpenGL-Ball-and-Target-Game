@@ -30,6 +30,31 @@ glfwWindowHint(GLFW_SAMPLES, 4);
 		return nullptr;
 	}
 
+
+
+	// Dark blue background
+	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+
+	// Enable depth test
+	glEnable(GL_DEPTH_TEST);
+	// Accept fragment if it closer to the camera than the former one
+	glDepthFunc(GL_LESS); 
+
+	// Cull triangles which normal is not towards the camera
+	//glEnable(GL_CULL_FACE);
+
+		// Enable blending
+	
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+
 return window;
+
+}
+
+void InitAntTweakBar()
+{
+
+
 
 }

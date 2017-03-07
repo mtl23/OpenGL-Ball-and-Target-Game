@@ -6,7 +6,8 @@
 #include <GL/glew.h>
 // Include GLFW
 #include <glfw3.h>
-
+#include <AntTweakBar.h>
 GLFWwindow* InitGraphics();
+void InitAntTweakBar();
 
 #endif

@@ -19,7 +19,7 @@
 #include <glm/gtx/norm.hpp>
 using namespace glm;
 
-#include <AntTweakBar.h>
+
 
 #include "shader.hpp"
 #include "texture.hpp"
@@ -97,32 +97,6 @@ int main( void )
 	GLFWwindow* window = InitGraphics();
 	InitEntitySystem(entityMax);
 
-	//glfwWindowHint(GLFW_SAMPLES, 4);
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1); 
-
-	//// Open a window and create its OpenGL context
-	//window = glfwCreateWindow( 1024, 768, "3DGameMIDTERM", NULL, NULL);
-	//if( window == NULL ){
-	//	fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
-	//	getchar();
-	//	glfwTerminate();
-	//	return -1;
-	//}
-	//glfwMakeContextCurrent(window);
-
-	//// Initialize GLEW
-	//glewExperimental = true; // Needed for core profile
-	//if (glewInit() != GLEW_OK) {
-	//	fprintf(stderr, "Failed to initialize GLEW\n");
-	//	getchar();
-	//	glfwTerminate();
-	//	return -1;
-	//}
-
 	// Initialize the GUI
 	TwInit(TW_OPENGL_CORE, NULL);
 	TwWindowSize(1024, 768);
@@ -149,14 +123,7 @@ int main( void )
 	//glfwSetCharCallback(window, (GLFWcharfun)TwEventCharGLFW);                      // - Directly redirect GLFW char events to AntTweakBar
 
 
-	// Example 1 :
-	//if ( GLEW_AMD_seamless_cubemap_per_texture ){
-	//	printf("The GL_AMD_seamless_cubemap_per_texture is present, (but we're not goint to use it)\n");
-	//	// Now it's legal to call glTexParameterf with the TEXTURE_CUBE_MAP_SEAMLESS_ARB parameter
-	//	// You HAVE to test this, because obviously, this code would fail on non-AMD hardware.
-	//}
 
-	// Example 2 :
 	if ( GLEW_ARB_debug_output ){
 		printf("The OpenGL implementation provides debug output. Let's use it !\n");
 		glDebugMessageCallbackARB(&DebugOutputCallback, NULL);
@@ -175,24 +142,13 @@ int main( void )
     glfwPollEvents();
     glfwSetCursorPos(window, 1024/2, 768/2);
 
-	// Dark blue background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-
-	// Enable depth test
-	glEnable(GL_DEPTH_TEST);
-	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LESS); 
-
-	// Cull triangles which normal is not towards the camera
-	//glEnable(GL_CULL_FACE);
-
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
-	//GLuint programIDTrans = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
+
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
@@ -201,9 +157,10 @@ int main( void )
 	// Load the texture
 	GLuint Texture = loadDDS("uvmap.DDS");
 	GLuint Texture2 = loadBMP_custom("uvtemplate.bmp");
+
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
-	//GLuint TextureIDTrans  = glGetUniformLocation(programID, "myTextureSamplerTrans");
+
 
 //////////////////monkey setups
 	// Read our .obj file
@@ -337,10 +294,6 @@ int main( void )
 	double lastFrameTime = lastTime;
 	int nbFrames = 0;
 	
-	// Enable blending
-	
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
 
 	do{
 
