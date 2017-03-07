@@ -1,8 +1,9 @@
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
-#include "vector.h"
-#include "sprite.h"
 
+#include <glfw3.h>
+
+#include <glm/glm.hpp>
 /**
 *@brief The data  structure for Entities 
 *@param inuse  flag decides what is in use
@@ -18,17 +19,11 @@
 typedef struct Entity_S
 {
 	int inuse; 
-	char filename[32]; 
-	int is_obst; 
-	int is_AI; 
-	//Sprite_M sprite; 
-	//Vector2D size;
-	///Vector2D position;
-	//Vector2D velocity;
-	int segNum;
+	char filename[32];
+
 	int next_think;/**time index for next_think*/
 	int think_rate; /**how often to run think*/
-	void(*draw) (struct Entity_S *self, SDL_Renderer *renderer); /**logic*<*/
+	void(*draw) (struct Entity_S *self, GLFWwindow* window); /**logic*<*/
 	void(*think) (struct Entity_S *self); /**logic*<*/
 	void(*update) (struct Entity_S *self); /**physics*<*/
 	void(*touch) (struct Entity_S *self, struct Entity_S *other); /**collsions*<*/
@@ -75,6 +70,6 @@ void entityFree(Entity **entity);
 *@param renderer: The renderer to draw the Entity's sprite onto
 *@param position: A 2D vector used to state position on the screen
 */
-//void entityDraw(Entity *entity,SDL_Renderer* renderer, int frame, Vector2D position);
+void entityDraw(Entity *entity,GLFWwindow* window, int frame, glm::vec2 position);
 
 #endif

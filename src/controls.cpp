@@ -1,6 +1,6 @@
-// Include GLFW
+/// Include GLFW
 #include <glfw3.h>
-extern GLFWwindow* window; // The "extern" keyword here is to access the variable "window" declared in tutorialXXX.cpp. This is a hack to keep the tutorials simple. Please avoid this.
+//extern GLFWwindow* window; // The "extern" keyword here is to access the variable "window" declared in tutorialXXX.cpp. This is a hack to keep the tutorials simple. Please avoid this.
 
 // Include GLM
 #include <glm/glm.hpp>
@@ -45,10 +45,10 @@ void computeMatricesFromInputs(){
 
 	// Get mouse position
 	double xpos, ypos;
-	glfwGetCursorPos(window, &xpos, &ypos);
+//	glfwGetCursorPos(window, &xpos, &ypos);
 
 	// Reset mouse position for next frame
-	glfwSetCursorPos(window, 1024/2, 768/2);
+//	glfwSetCursorPos(window, 1024/2, 768/2);
 
 	// Compute new orientation
 	horizontalAngle += mouseSpeed * float(1024/2 - xpos );
@@ -72,33 +72,33 @@ void computeMatricesFromInputs(){
 	glm::vec3 up = glm::cross( right, direction );
 
 	// Move forward
-	if (glfwGetKey( window, GLFW_KEY_UP ) == GLFW_PRESS){
-		position += direction * deltaTime * speed;
-	}
-	// Move backward
-	if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
-		position -= direction * deltaTime * speed;
-	}
+	//if (glfwGetKey( window, GLFW_KEY_UP ) == GLFW_PRESS){
+//		position += direction * deltaTime * speed;
+//	}
+//	// Move backward
+//	if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
+//		position -= direction * deltaTime * speed;
+//	}
 	// Strafe right
-	if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS){
-		position += right * deltaTime * speed;
-	}
+//	if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS){
+//		position += right * deltaTime * speed;
+//	}
 	// Strafe left
-	if (glfwGetKey( window, GLFW_KEY_LEFT ) == GLFW_PRESS){
+//	if (glfwGetKey( window, GLFW_KEY_LEFT ) == GLFW_PRESS){
 		position -= right * deltaTime * speed;
-	}
+//	}
 
 	float FoV = initialFoV;
-
+}
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 100.0f);
+//	ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 100.0f);
 	// Camera matrix
-	ViewMatrix       = glm::lookAt(
-								position,           // Camera is here
-								position+direction, // and looks here : at the same position, plus "direction"
-								up                  // Head is up (set to 0,-1,0 to look upside-down)
-						   );
+//	ViewMatrix       = glm::lookAt(
+//								position,           // Camera is here
+//								position+direction, // and looks here : at the same position, plus "direction"
+//								up                  // Head is up (set to 0,-1,0 to look upside-down)
+//						   );
 
 	// For the next frame, the "last time" will be "now"
-	lastTime = currentTime;
-}
+//	lastTime = currentTime;
+//}

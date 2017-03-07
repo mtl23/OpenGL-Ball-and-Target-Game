@@ -8,8 +8,8 @@
 
 // Include GLFW
 #include <glfw3.h>
-GLFWwindow* window;
 
+//GLFWwindow* window;
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -26,8 +26,12 @@ using namespace glm;
 #include "controls.hpp"
 #include "objloader.hpp"
 #include "vboindexer.hpp"
-#include "text2D.hpp";
+#include "text2D.hpp"
 #include "quaternion_utils.hpp"
+#include "entity.h"
+#include "graphics_glfw.h"
+
+extern int entityMax;
 
 vec3 gPosition1(-5.00f, 5.0f, 15.0f); //the monkey
 vec3 gOrientation1;
@@ -90,32 +94,34 @@ int main( void )
 		getchar();
 		return -1;
 	}
+	GLFWwindow* window = InitGraphics();
+	InitEntitySystem(entityMax);
 
-	glfwWindowHint(GLFW_SAMPLES, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1); 
+	//glfwWindowHint(GLFW_SAMPLES, 4);
+	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1); 
 
-	// Open a window and create its OpenGL context
-	window = glfwCreateWindow( 1024, 768, "3DGameMIDTERM", NULL, NULL);
-	if( window == NULL ){
-		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
-		getchar();
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(window);
+	//// Open a window and create its OpenGL context
+	//window = glfwCreateWindow( 1024, 768, "3DGameMIDTERM", NULL, NULL);
+	//if( window == NULL ){
+	//	fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
+	//	getchar();
+	//	glfwTerminate();
+	//	return -1;
+	//}
+	//glfwMakeContextCurrent(window);
 
-	// Initialize GLEW
-	glewExperimental = true; // Needed for core profile
-	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
-		getchar();
-		glfwTerminate();
-		return -1;
-	}
+	//// Initialize GLEW
+	//glewExperimental = true; // Needed for core profile
+	//if (glewInit() != GLEW_OK) {
+	//	fprintf(stderr, "Failed to initialize GLEW\n");
+	//	getchar();
+	//	glfwTerminate();
+	//	return -1;
+	//}
 
 	// Initialize the GUI
 	TwInit(TW_OPENGL_CORE, NULL);
@@ -286,13 +292,13 @@ int main( void )
 	std::vector<glm::vec3> vertices3;
 	std::vector<glm::vec2> uvs3;
 	std::vector<glm::vec3> normals3;
-	bool res3 = loadOBJ("ballkirby.obj", vertices3, uvs3, normals3);
-
 
 	std::vector<unsigned short> indices3;
 	std::vector<glm::vec3> indexed_vertices3;
 	std::vector<glm::vec2> indexed_uvs3;
 	std::vector<glm::vec3> indexed_normals3;
+
+	bool res3 = loadOBJ("ballkirby.obj", vertices3, uvs3, normals3);
 	indexVBO(vertices3, uvs3, normals, indices3, indexed_vertices3, indexed_uvs3, indexed_normals3);
 
 	// Load it into a VBO
@@ -352,8 +358,6 @@ int main( void )
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	
 
 		//// Compute the MVP matrix from keyboard and mouse input
 		//computeMatricesFromInputs();
@@ -648,7 +652,7 @@ int main( void )
 	glDeleteBuffers(1, &elementbuffer);
 	glDeleteTextures(1, &TextureID);
 	glDeleteVertexArrays(1, &VertexArrayID);
-
+	CloseEntitySystem();
 	
 	// Delete the text's VBO, the shader and the texture
 	cleanupText2D();

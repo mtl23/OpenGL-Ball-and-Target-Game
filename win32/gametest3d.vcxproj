@@ -14,6 +14,8 @@
     <ClCompile Include="..\src\controls.cpp" />
     <ClCompile Include="..\src\entity.cpp" />
     <ClCompile Include="..\src\gametest3d.cpp" />
+    <ClCompile Include="..\src\graphics_glfw.cpp" />
+    <ClCompile Include="..\src\Model.cpp" />
     <ClCompile Include="..\src\objloader.cpp" />
     <ClCompile Include="..\src\player.cpp" />
     <ClCompile Include="..\src\quaternion_utils.cpp" />
@@ -26,6 +28,7 @@
   <ItemGroup>
     <ClInclude Include="..\include\controls.hpp" />
     <ClInclude Include="..\include\entity.h" />
+    <ClInclude Include="..\include\graphics_glfw.h" />
     <ClInclude Include="..\include\objloader.hpp" />
     <ClInclude Include="..\include\player.h" />
     <ClInclude Include="..\include\quaternion_utils.hpp" />
