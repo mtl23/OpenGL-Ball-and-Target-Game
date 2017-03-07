@@ -29,14 +29,11 @@ using namespace glm;
 #include "text2D.hpp";
 #include "quaternion_utils.hpp"
 
-
-//0, 20, 37
-
-vec3 gPosition1(0.00f, 5.0f, 15.0f); //the monkey
+vec3 gPosition1(-5.00f, 5.0f, 15.0f); //the monkey
 vec3 gOrientation1;
  
 vec3 gPosition2( 0.0f, 0.0f, -15.0f); // the stage
-quat gOrientation2;
+quat gOrientation2 = quat(0.71f,0.00f,-0.71f,0.00f);
 
 vec3 gPosition3( 0.0f, 7.0f, 20.0f); // the ball
 quat gOrientation3;
@@ -189,7 +186,7 @@ int main( void )
 
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
-		//GLuint programIDTrans = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
+	//GLuint programIDTrans = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
@@ -201,13 +198,14 @@ int main( void )
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
 	//GLuint TextureIDTrans  = glGetUniformLocation(programID, "myTextureSamplerTrans");
+
+//////////////////monkey setups
 	// Read our .obj file
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
 	bool res = loadOBJ("aiai.obj", vertices, uvs, normals);
-
-
+	
 	std::vector<unsigned short> indices;
 	std::vector<glm::vec3> indexed_vertices;
 	std::vector<glm::vec2> indexed_uvs;
@@ -237,7 +235,9 @@ int main( void )
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0] , GL_STATIC_DRAW);
 
-//////////////////////////// the stage
+/////////// end monkey setups
+
+//////////////////////////// the stage setups
 
 	
 	// Read our .obj file
@@ -277,9 +277,9 @@ int main( void )
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices2.size() * sizeof(unsigned short), &indices2[0] , GL_STATIC_DRAW);
 
 
-	///////////////
+	///////////////end stage setups
 	
-	//////////////////////////// the ball
+	//////////////////////////// the ball setups
 
 	
 	// Read our .obj file
@@ -332,9 +332,9 @@ int main( void )
 	int nbFrames = 0;
 	
 	// Enable blending
-	glEnable(GL_BLEND);
+	
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	glEnable(GL_BLEND);
 
 	do{
 
@@ -376,7 +376,7 @@ int main( void )
 		);
 
 		//// Send our transformation to the currently bound shader, 
-		//// in the "MVP" uniform
+		//// in the "MVP" uniform wth INPUTS
 		//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP1[0][0]);
 		//glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix1[0][0]);
 
@@ -520,7 +520,7 @@ int main( void )
 				// And interpolate
 				//gOrientation2 = RotateTowards(gOrientation2, targetOrientation, 1.0f*deltaTime);
 	//		}
-			gOrientation2 = quat(0.71f,0.00f,-0.71f,0.00f); // (S,X,Y,Z)
+			//gOrientation2 = quat(0.71f,0.00f,-0.71f,0.00f); // (S,X,Y,Z)// change me with input
 			glm::mat4 RotationMatrix = mat4_cast(gOrientation2);
 			glm::mat4 TranslationMatrix = translate(mat4(), gPosition2); // A bit to the right
 			glm::mat4 ScalingMatrix = scale(mat4(), vec3(3.0f, 3.0f, 3.0f));
@@ -618,7 +618,9 @@ int main( void )
 				(void*)0           // element array buffer offset
 			);
 			
-/////////////////// End of rendering of the second object //////
+/////////////////// End of rendering of the third object //////
+
+
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);

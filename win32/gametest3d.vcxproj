@@ -12,8 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\controls.cpp" />
+    <ClCompile Include="..\src\entity.cpp" />
     <ClCompile Include="..\src\gametest3d.cpp" />
     <ClCompile Include="..\src\objloader.cpp" />
+    <ClCompile Include="..\src\player.cpp" />
     <ClCompile Include="..\src\quaternion_utils.cpp" />
     <ClCompile Include="..\src\shader.cpp" />
     <ClCompile Include="..\src\simple_logger.cpp" />
@@ -23,7 +25,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\controls.hpp" />
+    <ClInclude Include="..\include\entity.h" />
     <ClInclude Include="..\include\objloader.hpp" />
+    <ClInclude Include="..\include\player.h" />
     <ClInclude Include="..\include\quaternion_utils.hpp" />
     <ClInclude Include="..\include\shader.h" />
     <ClInclude Include="..\include\shader.hpp" />
