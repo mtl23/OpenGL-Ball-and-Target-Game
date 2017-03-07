@@ -1,0 +1,17 @@
+skydive fixes
+
+UI moves when the player moves, but can still be used by the player
+
+the player should be able to see targets when the parachute is engaged, fix roatation
+
+fix the player rotation when the land so they can look around, fix roattaion
+
+when the player has landed play pass or fail sfx
+
+when the player has landed ask them to play again or quit (menu)
+
+parachute model
+
+birds
+
+fix terrain on phone

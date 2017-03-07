@@ -9,7 +9,7 @@
 // Include GLFW
 #include <glfw3.h>
 
-//GLFWwindow* window;
+
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -30,6 +30,7 @@ using namespace glm;
 #include "quaternion_utils.hpp"
 #include "entity.h"
 #include "graphics_glfw.h"
+#include"Model.h"
 
 extern int entityMax;
 
@@ -96,6 +97,7 @@ int main( void )
 	}
 	GLFWwindow* window = InitGraphics();
 	InitEntitySystem(entityMax);
+	initModelSystem();
 
 	// Initialize the GUI
 	TwInit(TW_OPENGL_CORE, NULL);
@@ -605,6 +607,7 @@ int main( void )
 	glDeleteBuffers(1, &elementbuffer);
 	glDeleteTextures(1, &TextureID);
 	glDeleteVertexArrays(1, &VertexArrayID);
+	//closeModelSystem();
 	CloseEntitySystem();
 	
 	// Delete the text's VBO, the shader and the texture

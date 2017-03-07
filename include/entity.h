@@ -16,11 +16,13 @@
 *@param velocity inital velocity (usually 0)
 *@param segNum the segment number the entity is on the map as an int
 */
+
+#include "Model.h"
 typedef struct Entity_S
 {
 	int inuse; 
 	char filename[32];
-
+	Model Model;
 	int next_think;/**time index for next_think*/
 	int think_rate; /**how often to run think*/
 	void(*draw) (struct Entity_S *self, GLFWwindow* window); /**logic*<*/

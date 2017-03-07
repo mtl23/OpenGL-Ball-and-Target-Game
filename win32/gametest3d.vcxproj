@@ -29,6 +29,7 @@
     <ClInclude Include="..\include\controls.hpp" />
     <ClInclude Include="..\include\entity.h" />
     <ClInclude Include="..\include\graphics_glfw.h" />
+    <ClInclude Include="..\include\Model.h" />
     <ClInclude Include="..\include\objloader.hpp" />
     <ClInclude Include="..\include\player.h" />
     <ClInclude Include="..\include\quaternion_utils.hpp" />

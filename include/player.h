@@ -1,7 +1,7 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
-#include "sprite.h"
+#include "Model.h"
 #include "entity.h"
 
 
@@ -20,7 +20,7 @@
 
 typedef struct{
 
-Entity* p1_car;
+Entity* monkeyball;
 float position;		
 float speed;       
 float accel;        
@@ -34,9 +34,7 @@ float playerX;
 int rank;
 int done;
 int frame;
-int SUP;
-int AUP;
-int HUP;
+
 int points;
 					
 			} player;
@@ -47,10 +45,6 @@ int points;
  */
 player newPlayer();
 
-/**
- * @brief destroys player object 
- */
-void removePlayer();
 /**
  * @brief frees player object data
  */
