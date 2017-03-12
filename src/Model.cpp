@@ -28,7 +28,7 @@ memset(modelList, 0, sizeof(Model_S)*(modelMax));
 slog("model system is go");
 }
 
-void modelFree (Model_S *model)
+void freeModel (Model_S *model)
 {
   /*first lets check to see if the sprite is still being used.*/
   model->refcount--;
@@ -57,7 +57,7 @@ void closeModelSystem()
   for(i = 0;i < modelMax;i++)
    {
      
-      modelFree (&modelList[i]);
+      freeModel (&modelList[i]);
 	 
    }
 slog("model system is closed");
@@ -69,4 +69,15 @@ modelMax = 0;
 
 void loadModel(const char * path)
 {
+}
+
+Model* newModel(const char * path)
+{
+}
+
+
+
+void drawModel(Model*,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation)
+{
+
 }

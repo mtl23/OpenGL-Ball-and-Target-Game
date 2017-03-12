@@ -33,7 +33,7 @@ using namespace glm;
 #include"Model.h"
 
 extern int entityMax;
-
+GLFWwindow* window ;
 vec3 gPosition1(-5.00f, 5.0f, 15.0f); //the monkey
 vec3 gOrientation1;
  
@@ -95,7 +95,8 @@ int main( void )
 		getchar();
 		return -1;
 	}
-	GLFWwindow* window = InitGraphics();
+	
+	window = InitGraphics();
 	InitEntitySystem(entityMax);
 	initModelSystem();
 

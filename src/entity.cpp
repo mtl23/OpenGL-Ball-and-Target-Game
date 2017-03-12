@@ -5,7 +5,10 @@
 #include "entity.h"
 #include "vector.h"
 #include "simple_logger.h"
+#include "graphics_glfw.h"
 #include "objloader.hpp"
+
+extern GLFWwindow* window ;
 
 Entity *entityList = NULL;
 int numEntity = 0;
@@ -114,7 +117,7 @@ Entity *entityLoad(char *filename, glm::vec2 position) //should load a object en
   return temp;
 }
 
-void entityDraw(Entity *entity,GLFWwindow* window,int frame, glm::vec2 position)
+void entityDraw(Entity *entity,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation)
 {
 	if((!entity)||(!window))
 	{
@@ -123,13 +126,13 @@ void entityDraw(Entity *entity,GLFWwindow* window,int frame, glm::vec2 position)
 		return;
 	}
 
-	/*if(!&entity->sprite)
+	if(!&entity->Model)
 	{
 	
 		slog("no valid entity sprite");
 		return;
 	}
-	spriteDraw(&entity->sprite,renderer, frame ,position);*/
+	drawModel(&entity->Model,window,position,orientation);
 }
 
 void entityThinkAll()
@@ -159,7 +162,7 @@ void entityUpdateAll()
 	 {
 		continue;
 	 }
-	 if(!entityList[i].think)
+	 if(!entityList[i].update)
 	 {
 		continue;
 	 }
@@ -178,11 +181,38 @@ void entityDrawAll()
 	 {
 		continue;
 	 }
-	 if(!entityList[i].think)
+  if(!entityList[i].draw)
 	 {
 		continue;
 	 }
-	// entityList[i].draw(&entityList[i],renderer);
+	 entityList[i].draw(&entityList[i], window);
 	}
 
  }
+
+void ThinkPlayer(Entity_S* user)
+{}
+void TouchPlayer(Entity_S* user, Entity_S* other)
+{}
+
+void DrawPlayer(Entity_S* user, GLFWwindow* window)
+{}
+
+void UpdatePlayer(Entity_S* user)
+{
+	
+}
+
+
+void ThinkObstacle(Entity_S* obstacle)
+{}
+void TouchObstacle(Entity_S* obstacle, Entity_S* user)
+{}
+
+void DrawObstacle(Entity_S* obstacle, GLFWwindow* window)
+{}
+
+void UpdateObstacle(Entity_S* obstacles)
+{
+	
+}

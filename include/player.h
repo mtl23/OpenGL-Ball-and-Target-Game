@@ -18,39 +18,28 @@
  * @param done flag for finishiing a race, remember to set it to 0 again at the strat of the next race
  */
 
-typedef struct{
+typedef struct Player_S{
 
-Entity* monkeyball;
-float position;		
-float speed;       
-float accel;        
-float maxaccel;     
-float minaccel;		
-float minspeed;        
-float maxspeed;        
-float maxX;         
-float minX;         
-float playerX;     
-int rank;
-int done;
-int frame;
-
+Entity* monkey;
+Model* ball;		
 int points;
+
+void(*free) (struct Player_S *self); /**cleanup function call on free*<*/
+
 					
-			} player;
+			} Player;
 #endif
 /**
  * @brief creates player object 
  * @return a new player object
  */
-player newPlayer();
+Player_S newPlayer();
 
 /**
  * @brief frees player object data
  */
-void freePlayer();
+void freePlayer(Player_S* player);
 
 /**
  * @brief Update the player's speed, acceleration, position, and PlayerX based on inputs 
  */
-void UpdatePlayer(player* user);

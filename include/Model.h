@@ -13,6 +13,10 @@
 
 typedef struct Model_S
 {
+
+	char filename[32];
+	int refcount;
+
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
@@ -29,15 +33,16 @@ typedef struct Model_S
 
 	GLuint Texture;
 
-	glm::vec3 position;
-	glm::vec3 Orientation;
-	char * filename;
-	int refcount;
+
+
 }Model;
 
 void initModelSystem();
 void closeModelSystem();
-void newModel();
+Model* newModel(const char * path);
+void freeModel(Model_S*);
 void loadModel(const char * path);
-void drawModel();
+void drawModel(Model_S*,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation);
+void drawAll();
+void freeModelAll(); 
 #endif
