@@ -20,15 +20,15 @@
 
 typedef struct Player_S{
 
-Entity* monkey;
-Model* ball;		
+struct Entity_S Ent;
+struct Model_S  Model;		
 int points;
 
-void(*free) (struct Player_S *self); /**cleanup function call on free*<*/
+void(*free) (struct Entity *self); /**cleanup function call on free*<*/
 
 					
-			} Player;
-#endif
+			}Player_S;
+
 /**
  * @brief creates player object 
  * @return a new player object
@@ -38,8 +38,9 @@ Player_S newPlayer();
 /**
  * @brief frees player object data
  */
-void freePlayer(Player_S* player);
+void freePlayer(Entity_S player);
 
 /**
  * @brief Update the player's speed, acceleration, position, and PlayerX based on inputs 
  */
+#endif

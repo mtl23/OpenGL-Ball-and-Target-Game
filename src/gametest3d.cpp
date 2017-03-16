@@ -19,8 +19,6 @@
 #include <glm/gtx/norm.hpp>
 using namespace glm;
 
-
-
 #include "shader.hpp"
 #include "texture.hpp"
 #include "controls.hpp"
@@ -28,9 +26,8 @@ using namespace glm;
 #include "vboindexer.hpp"
 #include "text2D.hpp"
 #include "quaternion_utils.hpp"
-#include "entity.h"
 #include "graphics_glfw.h"
-#include"Model.h"
+#include "player.h"
 
 extern int entityMax;
 GLFWwindow* window ;
@@ -44,6 +41,7 @@ vec3 gPosition3( 0.0f, 7.0f, 20.0f); // the ball
 quat gOrientation3;
  
 bool gLookAtOther = true;
+
 // The ARB_debug_output extension, which is used in this tutorial as an example,
 // can call a function of ours with error messages.
 // This function must have this precise prototype ( parameters and return value )
@@ -100,8 +98,11 @@ int main( void )
 	InitEntitySystem(entityMax);
 	initModelSystem();
 
+	Entity_S p1 = EntityNew();
+	Player_S p2 = newPlayer();
+
 	// Initialize the GUI
-	TwInit(TW_OPENGL_CORE, NULL);
+	/*TwInit(TW_OPENGL_CORE, NULL);
 	TwWindowSize(1024, 768);
 	TwBar * EulerGUI = TwNewBar("Euler settings");
 	TwBar * QuaternionGUI = TwNewBar("Quaternion settings");
@@ -116,7 +117,7 @@ int main( void )
 	TwAddVarRW(EulerGUI, "Pos Z"  , TW_TYPE_FLOAT, &gPosition1.z, "step=0.1");
  
 	TwAddVarRW(QuaternionGUI, "Quaternion", TW_TYPE_QUAT4F, &gOrientation2, "showval=true open=true ");
-	TwAddVarRW(QuaternionGUI, "Use LookAt", TW_TYPE_BOOL8 , &gLookAtOther, "help='Look at the other monkey ?'");
+	TwAddVarRW(QuaternionGUI, "Use LookAt", TW_TYPE_BOOL8 , &gLookAtOther, "help='Look at the other monkey ?'");*/
  
 	// Set GLFW event callbacks. I removed glfwSetWindowSizeCallback for conciseness
 	//glfwSetMouseButtonCallback(window, (GLFWmousebuttonfun)TwEventMouseButtonGLFW); // - Directly redirect GLFW mouse button events to AntTweakBar
@@ -124,7 +125,6 @@ int main( void )
 	//glfwSetScrollCallback(window, (GLFWscrollfun)TwEventMouseWheelGLFW);    // - Directly redirect GLFW mouse wheel events to AntTweakBar
 	//glfwSetKeyCallback(window, (GLFWkeyfun)TwEventKeyGLFW);                         // - Directly redirect GLFW key events to AntTweakBar
 	//glfwSetCharCallback(window, (GLFWcharfun)TwEventCharGLFW);                      // - Directly redirect GLFW char events to AntTweakBar
-
 
 
 	if ( GLEW_ARB_debug_output ){
@@ -166,6 +166,8 @@ int main( void )
 
 
 //////////////////monkey setups
+
+
 	// Read our .obj file
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
@@ -241,9 +243,8 @@ int main( void )
 	glGenBuffers(1, &elementbuffer2);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices2.size() * sizeof(unsigned short), &indices2[0] , GL_STATIC_DRAW);
-
-
 	///////////////end stage setups
+
 	
 	//////////////////////////// the ball setups
 
@@ -586,7 +587,7 @@ int main( void )
 		glDisableVertexAttribArray(2);
 
 		// Draw GUI
-		TwDraw();
+		//TwDraw();
 
 		char text[256];
 		sprintf(text,"%.2f sec", glfwGetTime() );
@@ -615,7 +616,7 @@ int main( void )
 	cleanupText2D();
 
 	// Close GUI and OpenGL window, and terminate GLFW
-	TwTerminate();
+	//TwTerminate();
 	glfwTerminate();
 
 	return 0;

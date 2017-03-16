@@ -10,9 +10,9 @@
 
 extern GLFWwindow* window ;
 
-Entity *entityList = NULL;
+Entity_S *entityList = NULL;
 int numEntity = 0;
-int entityMax = 90;
+int entityMax = 10;
 
 
 void InitEntitySystem(int EntityMax)
@@ -23,13 +23,13 @@ void InitEntitySystem(int EntityMax)
 	slog("Cannot init entities");
 	return;
 	}
-		entityList = (Entity*)malloc(sizeof(Entity)*(entityMax));
+		entityList = (Entity_S*)malloc(sizeof(Entity_S)*(entityMax));
 
 	if(entityList == NULL)
 	{
 		slog("failed to initialize entity system. STILL NULL");
 	}
-memset(entityList, 0, sizeof(Entity)*(entityMax));
+memset(entityList, 0, sizeof(Entity_S)*(entityMax));
 slog("Entity system is go");
 
 atexit(CloseEntitySystem);
@@ -51,31 +51,41 @@ numEntity = 0;
 }
 
 
-Entity* EntityNew()
+Entity_S EntityNew()
 {
 	int i;
+
+	if(numEntity + 1 >= entityMax)
+  {
+      slog( "Maximum Entities Reached.");
+        exit(1);
+  }
 	for( i= 0 ; i < entityMax; i++ )
 	{
 		if(entityList[i].inuse)
 		{
 			continue;
 		}
-		memset(&entityList[i],0,sizeof(Entity));
-		entityList[i].inuse = 1;
+
+
+		memset(&entityList[i],0,sizeof(Entity_S));
+		
 		slog("NEW ENTITY");
 		if(!&entityList[i])
 		{
 			slog("ENTITY ALLOCATION FAILED");
-			return NULL;
+			exit(1);
 		}
-
-		return &entityList[i];
+		 numEntity++;
+		 entityList[i].accel = glm::vec3(0,0,0);
+		entityList[i].inuse = 1;
+		 return entityList[i];
 	}
 }
 
 
 
-void entityFree(Entity **entity)
+void entityFree(Entity_S **entity)
 {
 	(*entity)->inuse= 0;
 	*entity = NULL;
@@ -83,41 +93,8 @@ void entityFree(Entity **entity)
 }
 
 
-Entity *entityLoad(char *filename, glm::vec2 position) //should load a object entity if needed
-{
-  int i;
-  Entity *temp;
-  temp = EntityNew();
 
-  /*makesure we have the room for a entity*/
-  if(numEntity + 1 >= entityMax)
-  {
-      slog( "Maximum Entities Reached.");
-        exit(1);
-  }
-  /*if its not already in memory, then load it.*/
-  
-  numEntity++;
- // temp->sprite = temp_spr;
-  //strncpy(temp->filename, temp_spr.filename,20);
-  for(i = 0;i <= numEntity;i++)
-  {
-    if(entityList[i].inuse)break;
-  }
-
-  if(&temp == NULL)
-  {
-  slog("unable to load a vital sprite");
-  exit(0);
-  }
- slog("loaded an entity for the first time");
-
-
- temp->inuse = 1;
-  return temp;
-}
-
-void entityDraw(Entity *entity,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation)
+void entityDraw(Entity_S *entity,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation)
 {
 	if((!entity)||(!window))
 	{

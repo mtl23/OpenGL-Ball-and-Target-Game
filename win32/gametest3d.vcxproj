@@ -84,7 +84,7 @@
     <IntDir>$(ProjectDir)\..</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\mtl23\Desktop\IT485\gametest3d-master\include;C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\include;C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\mtl23\Desktop\IT485\test-master\include;C:\Users\mtl23\Desktop\IT485\gametest3d-master\include;C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\include;C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\lib-vc2012;C:\Users\mtl23\Desktop\IT485\glew-2.0.0\lib\Release\Win32;C:\Users\mtl23\Desktop\IT485\lib;$(LibraryPath)</LibraryPath>

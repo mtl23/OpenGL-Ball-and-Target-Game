@@ -6,7 +6,6 @@
 #include <glm/gtx/norm.hpp>
 #include <graphics_glfw.h>
 #include <vector>
-#include "Model.h"
 #include "objloader.hpp"
 using namespace glm;
 
@@ -67,17 +66,19 @@ modelMax = 0;
 }
 
 
-void loadModel(const char * path)
+void loadModel( const char * path)
 {
 }
 
-Model* newModel(const char * path)
+Model_S* newModel( const char * path)
 {
+	Model_S* temp;
+	return temp;
 }
 
 
 
-void drawModel(Model*,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation)
+void drawModel(Model_S*,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation)
 {
 
 }
