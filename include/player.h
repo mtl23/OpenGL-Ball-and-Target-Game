@@ -20,9 +20,10 @@
 
 typedef struct Player_S{
 
+int  points;
 struct Entity_S Ent;
 struct Model_S  Model;		
-int points;
+
 
 void(*free) (struct Entity *self); /**cleanup function call on free*<*/
 

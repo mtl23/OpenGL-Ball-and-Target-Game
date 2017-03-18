@@ -13,7 +13,7 @@ typedef struct Entity_S
 {
 	int inuse; 
 
-	struct Model_S Model;
+	struct Model_S* Model;
 	glm::vec3 speed;       
 	glm::vec3 accel;        
 	glm::vec3 maxaccel;     
@@ -49,7 +49,7 @@ void CloseEntitySystem();
 *@brief creates a single new Entity object
 *@return an Entity type object
 */
-Entity_S EntityNew();
+Entity_S* EntityNew();
 /**
 *
 *@brief Frees up a single Entity

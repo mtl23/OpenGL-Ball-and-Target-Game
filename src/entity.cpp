@@ -51,7 +51,7 @@ numEntity = 0;
 }
 
 
-Entity_S EntityNew()
+Entity_S* EntityNew()
 {
 	int i;
 
@@ -79,7 +79,7 @@ Entity_S EntityNew()
 		 numEntity++;
 		 entityList[i].accel = glm::vec3(0,0,0);
 		entityList[i].inuse = 1;
-		 return entityList[i];
+		 return &entityList[i];
 	}
 }
 
@@ -109,7 +109,7 @@ void entityDraw(Entity_S *entity,GLFWwindow* window, glm::vec3 position, glm::ve
 		slog("no valid entity sprite");
 		return;
 	}
-	drawModel(&entity->Model,window,position,orientation);
+//	drawModel(&entity->Model,window,position,orientation);
 }
 
 void entityThinkAll()

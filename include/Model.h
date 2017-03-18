@@ -41,9 +41,9 @@ typedef struct Model_S
 
 void initModelSystem();
 void closeModelSystem();
-Model_S* newModel(const char * path);
+Model_S newModel(const char * path);
 void freeModel(Model_S*);
-void loadModel(const char * path);
+Model_S* loadModel(const char * path);
 void drawModel(Model_S*,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation);
 void drawAll();
 void freeModelAll(); 
