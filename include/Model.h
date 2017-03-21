@@ -34,7 +34,8 @@ typedef struct Model_S
 	GLuint elementbuffer;
 
 	GLuint Texture;
-
+	glm::vec3 position;
+	glm::quat orientation;
 
 
 }Model_S;
@@ -44,7 +45,7 @@ void closeModelSystem();
 Model_S newModel(const char * path);
 void freeModel(Model_S*);
 Model_S* loadModel(const char * path);
-void drawModel(Model_S*,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation);
+void drawModel(Model_S* model,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation);
 void drawAll();
 void freeModelAll(); 
 #endif

@@ -20,8 +20,7 @@ typedef struct Entity_S
 	glm::vec3 minaccel;		
 	glm::vec3 minspeed;        
 	glm::vec3 maxspeed;        
-	glm::vec3 position;
-	glm::vec3 orientation;
+
 	int next_think;/**time index for next_think*/
 	int think_rate; /**how often to run think*/
 	void(*draw) (struct Entity_S *self, GLFWwindow* window); /**logic*<*/

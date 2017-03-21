@@ -11,11 +11,14 @@ using namespace glm;
 
 #include "quaternion_utils.hpp"
 #include "Model.h"
+#include "shader.hpp"
 #include "simple_logger.h"
 
 Model_S *modelList =NULL;
 int modelMax = 10;
 int numModels = 0;
+
+
 void initModelSystem()
 {
 	modelList = (Model_S*)malloc(sizeof(Model_S)*(modelMax));
@@ -30,7 +33,7 @@ slog("model system is go");
 
 void freeModel (Model_S *model)
 {
-  /*first lets check to see if the sprite is still being used.*/
+
   model->refcount--;
   if(model->refcount== 0)
   {
@@ -67,57 +70,160 @@ modelMax = 0;
 }
 
 
-//Model_S* loadModel( const char * path)
-//{
-//	
-//}
-
 Model_S newModel( const char * path)
 {
-	//Model_S* temp;
 	int i;
-	for(i = 0; i < numModels; i++)
-  {
+
 	  if(!modelList)
-	{
-	slog("WARNING! no model list to lookup!");
-	}
-	    if(numModels + 1 >= modelMax)
-  {
-      slog("Maximum Models Reached.");
-        exit(1);
-  }
-  /*if its not already in memory, then load it.*/
-  numModels++;
-  for(i = 0;i <= numModels;i++)
-  {
-    if(!modelList[i].refcount)break;
-  }
- 
-  if(path == NULL)
+			{
+			slog("WARNING! no model list to lookup!");
+			
+			}
+	  if(numModels + 1 >= modelMax)
+			{
+			slog("Maximum Models Reached.");
+			exit(1);
+			}
+    if(path == NULL)
   {
    slog("unable to load a vital model");
    exit(1);
   }
-      modelList[i].refcount++;
-	
+  
+	numModels++;
+  
+	for(i = 0;i <= numModels;i++)
+  {
+    if(!modelList[i].refcount)break;
+  }
+
   if(strncmp(path,modelList[i].filename,20)==0)
     {
-	slog("already loaded");
-
-  	  return modelList[i];
+		slog("already loaded");
+		modelList[i].refcount++;
+  		return modelList[i];
     }
 
+	modelList[i].refcount++;
     strncpy(modelList[i].filename,path,20);
+	bool res = loadOBJ(path, modelList[i].vertices, modelList[i].uvs, modelList[i].normals);
+	indexVBO(modelList[i].vertices, modelList[i].uvs, modelList[i].normals, modelList[i].indices, modelList[i].indexed_vertices, modelList[i].indexed_uvs, modelList[i].indexed_normals);
 
-	}
-	 return modelList[i];
+	// Load it into a VBO
+
 	
+	glGenBuffers(1, &modelList[i].vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, modelList[i].vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER, modelList[i].indexed_vertices.size() * sizeof(glm::vec3), &modelList[i].indexed_vertices[0], GL_STATIC_DRAW);
+
+	
+	glGenBuffers(1, &modelList[i].uvbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, modelList[i].uvbuffer);
+	glBufferData(GL_ARRAY_BUFFER, modelList[i].indexed_uvs.size() * sizeof(glm::vec2), &modelList[i].indexed_uvs[0], GL_STATIC_DRAW);
+
+	
+	glGenBuffers(1, &modelList[i].normalbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, modelList[i].normalbuffer);
+	glBufferData(GL_ARRAY_BUFFER, modelList[i].indexed_normals.size() * sizeof(glm::vec3), &modelList[i].indexed_normals[0], GL_STATIC_DRAW);
+
+	// Generate a buffer for the indices as well
+	glGenBuffers(1, &modelList[i].elementbuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, modelList[i].elementbuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, modelList[i].indices.size() * sizeof(unsigned short), &modelList[i].indices[0] , GL_STATIC_DRAW);
+
+	return modelList[i];
 }
 
 
 
-void drawModel(Model_S*,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation)
+void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation)
 {
+			// Bind our texture in Texture Unit 0
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, model->Texture);
+		// Set our "myTextureSampler" sampler to user Texture Unit 0
+		glUniform1i(model->Texture, 0);
+
+
+		   GLuint programID2 = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
+	GLuint MatrixID = glGetUniformLocation(programID2, "MVP");
+	GLuint ViewMatrixID = glGetUniformLocation(programID2, "V");
+	GLuint ModelMatrixID = glGetUniformLocation(programID2, "M");
+
+// 1rst attribute buffer : vertices
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, model->vertexbuffer);
+		glVertexAttribPointer(
+			0,                  // attribute
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+
+		// 2nd attribute buffer : UVs
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, model->uvbuffer);
+		glVertexAttribPointer(
+			1,                                // attribute
+			2,                                // size
+			GL_FLOAT,                         // type
+			GL_FALSE,                         // normalized?
+			0,                                // stride
+			(void*)0                          // array buffer offset
+		);
+
+		// 3rd attribute buffer : normals
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, model->normalbuffer);
+		glVertexAttribPointer(
+			2,                                // attribute
+			3,                                // size
+			GL_FLOAT,                         // type
+			GL_FALSE,                         // normalized?
+			0,                                // stride
+			(void*)0                          // array buffer offset
+		);
+
+		// Index buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->elementbuffer);
+		GLuint LightID = glGetUniformLocation(programID2, "LightPosition_worldspace");
+		glUseProgram(programID2);
+
+			glm::mat4 ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+			glm::mat4 ViewMatrix = glm::lookAt(
+			glm::vec3( 0, 20, 37 ), // Camera is here
+			glm::vec3( 0, 0, 0 ), // and looks here
+			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+		);
+
+		glm::vec3 lightPos = glm::vec3(16,-8,-24);
+		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+
+		glm::mat4 RotationMatrix = mat4_cast(model->orientation);
+		glm::mat4 TranslationMatrix = translate(mat4(), model->position); // places into position
+		glm::mat4 ScalingMatrix = scale(mat4(), vec3(.25f, .25f, .25f)); //here we sacle
+		glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
+		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+ 
+			// Send our transformation to the currently bound shader, 
+			// in the "MVP" uniform
+			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+ 
+ 
+			// Draw the triangles !
+			glDrawElements(
+				GL_TRIANGLES,      // mode
+				model->indices.size(),    // count
+				GL_UNSIGNED_SHORT,   // type
+				(void*)0           // element array buffer offset
+			);
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
 
 }

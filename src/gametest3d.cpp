@@ -246,9 +246,7 @@ int main( void )
 	///////////////end stage setups
 
 	
-	//////////////////////////// the ball setups
-
-	
+	//////////////////////////// the ball setups	
 	// Read our .obj file
 	std::vector<glm::vec3> vertices3;
 	std::vector<glm::vec2> uvs3;
@@ -494,8 +492,7 @@ int main( void )
 			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
- 
- 
+  
 			// Draw the triangles !
 			glDrawElements(
 				GL_TRIANGLES,      // mode
@@ -505,8 +502,7 @@ int main( void )
 			);
 		}
 
-		////// End of rendering of the second object //////
-
+////// End of rendering of the second object //////
 //// Start of rendering of the third object //////
 
 		// Bind our texture in Texture Unit 0
