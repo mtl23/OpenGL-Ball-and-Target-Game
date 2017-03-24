@@ -81,6 +81,7 @@ Entity_S* EntityNew()
 		entityList[i].inuse = 1;
 		 return &entityList[i];
 	}
+	return NULL;
 }
 
 
@@ -176,9 +177,7 @@ void DrawPlayer(Entity_S* user, GLFWwindow* window)
 {}
 
 void UpdatePlayer(Entity_S* user)
-{
-	
-}
+{}
 
 
 void ThinkObstacle(Entity_S* obstacle)

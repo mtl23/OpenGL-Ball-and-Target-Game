@@ -114,7 +114,6 @@ void indexVBO(
 
 		PackedVertex packed = {in_vertices[i], in_uvs[i], in_normals[i]};
 		
-
 		// Try to find a similar vertex in out_XXXX
 		unsigned short index;
 		bool found = getSimilarVertexIndex_fast( packed, VertexToOutIndex, index);

@@ -9,7 +9,6 @@
 // Include GLFW
 #include <glfw3.h>
 
-
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -127,13 +126,13 @@ int main( void )
 	//glfwSetCharCallback(window, (GLFWcharfun)TwEventCharGLFW);                      // - Directly redirect GLFW char events to AntTweakBar
 
 
-	/*if ( GLEW_ARB_debug_output ){
-		printf("The OpenGL implementation provides debug output. Let's use it !\n");
-		glDebugMessageCallbackARB(&DebugOutputCallback, NULL);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB); 
-	}else{
-		printf("ARB_debug_output unavailable. You have to use glGetError() and/or gDebugger to catch mistakes.\n");
-	}*/
+	//if ( GLEW_ARB_debug_output ){
+	//	printf("The OpenGL implementation provides debug output. Let's use it !\n");
+	//	glDebugMessageCallbackARB(&DebugOutputCallback, NULL);
+	//	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB); 
+	//}else{
+	//	printf("ARB_debug_output unavailable. You have to use glGetError() and/or gDebugger to catch mistakes.\n");
+	//}
 
 
 	// Ensure we can capture the escape key being pressed below
@@ -166,8 +165,6 @@ int main( void )
 
 
 //////////////////monkey setups
-
-
 	// Read our .obj file
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
@@ -318,8 +315,7 @@ int main( void )
 		//computeMatricesFromInputs();
 		//glm::mat4 ProjectionMatrix = getProjectionMatrix();
 		//glm::mat4 ViewMatrix = getViewMatrix();
-
-			
+				
 		////// Start of the rendering of the first object //////
 		
 		// Use our shader
@@ -338,7 +334,6 @@ int main( void )
 		//// in the "MVP" uniform wth INPUTS
 		//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP1[0][0]);
 		//glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix1[0][0]);
-
 
 		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
@@ -408,8 +403,6 @@ int main( void )
 			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
  
- 
- 
 			// Draw the triangles !
 			glDrawElements(
 				GL_TRIANGLES,      // mode
@@ -423,7 +416,6 @@ int main( void )
 ////// End of rendering of the first object //////
 
 ////// Start of the rendering of the second object //////
-
 
 // 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
@@ -607,7 +599,7 @@ int main( void )
 	glDeleteVertexArrays(1, &VertexArrayID);
 	//closeModelSystem();
 	CloseEntitySystem();
-	
+	closeModelSystem();
 	// Delete the text's VBO, the shader and the texture
 	cleanupText2D();
 
@@ -617,4 +609,3 @@ int main( void )
 
 	return 0;
 }
-

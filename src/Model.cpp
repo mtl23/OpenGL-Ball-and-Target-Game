@@ -37,12 +37,12 @@ void freeModel (Model_S *model)
   model->refcount--;
   if(model->refcount== 0)
   {
-  strcpy(model->filename,"\0");
+  strcpy_s(model->filename,"\0");
   
   }
     if(model->refcount<= 0)
   {
-  strcpy(model->filename,"\0");
+  strcpy_s(model->filename,"\0");
   memset(model,0,sizeof(model));
   }
  model = NULL;
@@ -70,16 +70,16 @@ modelMax = 0;
 }
 
 
-Model_S newModel( const char * path)
+Model_S* newModel( const char * path)
 {
 	int i;
 
-	  if(!modelList)
+	if(!modelList)
 			{
 			slog("WARNING! no model list to lookup!");
-			
+			exit(1);
 			}
-	  if(numModels + 1 >= modelMax)
+	 if(numModels + 1 >= modelMax)
 			{
 			slog("Maximum Models Reached.");
 			exit(1);
@@ -94,15 +94,14 @@ Model_S newModel( const char * path)
   
 	for(i = 0;i <= numModels;i++)
   {
-    if(!modelList[i].refcount)break;
-  }
-
-  if(strncmp(path,modelList[i].filename,20)==0)
+     if(!strncmp(path,modelList[i].filename,20))
     {
 		slog("already loaded");
 		modelList[i].refcount++;
-  		return modelList[i];
+  		return &modelList[i];
     }
+}
+  memset(&modelList[i],0,sizeof(Model_S));
 
 	modelList[i].refcount++;
     strncpy(modelList[i].filename,path,20);
@@ -110,17 +109,13 @@ Model_S newModel( const char * path)
 	indexVBO(modelList[i].vertices, modelList[i].uvs, modelList[i].normals, modelList[i].indices, modelList[i].indexed_vertices, modelList[i].indexed_uvs, modelList[i].indexed_normals);
 
 	// Load it into a VBO
-
-	
 	glGenBuffers(1, &modelList[i].vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, modelList[i].vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, modelList[i].indexed_vertices.size() * sizeof(glm::vec3), &modelList[i].indexed_vertices[0], GL_STATIC_DRAW);
 
-	
 	glGenBuffers(1, &modelList[i].uvbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, modelList[i].uvbuffer);
 	glBufferData(GL_ARRAY_BUFFER, modelList[i].indexed_uvs.size() * sizeof(glm::vec2), &modelList[i].indexed_uvs[0], GL_STATIC_DRAW);
-
 	
 	glGenBuffers(1, &modelList[i].normalbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, modelList[i].normalbuffer);
@@ -131,21 +126,19 @@ Model_S newModel( const char * path)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, modelList[i].elementbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, modelList[i].indices.size() * sizeof(unsigned short), &modelList[i].indices[0] , GL_STATIC_DRAW);
 
-	return modelList[i];
+	return &modelList[i];
 }
-
 
 
 void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation)
 {
-			// Bind our texture in Texture Unit 0
+		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, model->Texture);
 		// Set our "myTextureSampler" sampler to user Texture Unit 0
 		glUniform1i(model->Texture, 0);
 
-
-		   GLuint programID2 = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
+	GLuint programID2 = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
 	GLuint MatrixID = glGetUniformLocation(programID2, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID2, "V");
 	GLuint ModelMatrixID = glGetUniformLocation(programID2, "M");

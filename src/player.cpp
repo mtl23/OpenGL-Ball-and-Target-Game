@@ -9,13 +9,13 @@
 #include "player.h"
 
 
- Player_S newPlayer()
+ Player_S newPlayer() //use a pointer
 {
 
 	Player_S User;
-	User.Ent = *EntityNew();
-//	User.Model = newModel("aiai.obj");
-	User.points = 50;
+	User.Ent = EntityNew();
+	User.Model = newModel("aiai.obj");
+	User.points = 0;
 	//User.Ent.update = UpdatePlayer;
 	//User.Ent.draw = DrawPlayer;
 	//User.Ent.think = ThinkPlayer;
