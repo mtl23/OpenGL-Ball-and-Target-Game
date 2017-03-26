@@ -13,7 +13,6 @@ typedef struct Entity_S
 {
 	int inuse; 
 
-	struct Model_S* Model;
 	glm::vec3 speed;       
 	glm::vec3 accel;        
 	glm::vec3 maxaccel;     

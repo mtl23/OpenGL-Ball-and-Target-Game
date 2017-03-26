@@ -9,10 +9,11 @@
 #include "player.h"
 
 
- Player_S newPlayer() //use a pointer
+ Player_S* newPlayer() //use a pointer
 {
 
 	Player_S User;
+	memset(&User,0,sizeof(Player_S));
 	User.Ent = EntityNew();
 	User.Model = newModel("aiai.obj");
 	User.points = 0;
@@ -22,14 +23,13 @@
 	//User.Ent.touch = TouchPlayer;
 
 
-return User;
+return &User;
 }
 
 void freePlayer(Entity_S *player)
 {
 	
 	entityFree(&player);
-	freeModel(player->Model);
 	//&player->points = 0;
 	return;
 }

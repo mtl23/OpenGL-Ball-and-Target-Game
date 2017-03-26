@@ -104,12 +104,7 @@ void entityDraw(Entity_S *entity,GLFWwindow* window, glm::vec3 position, glm::ve
 		return;
 	}
 
-	if(!&entity->Model)
-	{
 	
-		slog("no valid entity sprite");
-		return;
-	}
 //	drawModel(&entity->Model,window,position,orientation);
 }
 

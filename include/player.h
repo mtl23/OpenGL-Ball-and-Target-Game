@@ -34,7 +34,7 @@ void(*free) (struct Entity *self); /**cleanup function call on free*<*/
  * @brief creates player object 
  * @return a new player object
  */
-Player_S newPlayer();
+Player_S* newPlayer();
 
 /**
  * @brief frees player object data

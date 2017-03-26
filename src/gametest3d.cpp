@@ -98,7 +98,7 @@ int main( void )
 	initModelSystem();
 
 //	Entity_S p1 = EntityNew();
-	Player_S p2 = newPlayer();
+	Player_S* p2 = newPlayer();
 
 	// Initialize the GUI
 	/*TwInit(TW_OPENGL_CORE, NULL);
