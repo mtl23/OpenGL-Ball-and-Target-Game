@@ -82,12 +82,14 @@ Entity_S* EntityNew()
 		 return &entityList[i];
 	}
 	return NULL;
+
 }
 
 
 
 void entityFree(Entity_S **entity)
 {
+//	freeModel((*entity)->model);
 	(*entity)->inuse= 0;
 	*entity = NULL;
   
@@ -97,10 +99,10 @@ void entityFree(Entity_S **entity)
 
 void entityDraw(Entity_S *entity,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation)
 {
-	if((!entity)||(!window))
+	if((!entity)||(!window)||(!entity->model))
 	{
 		
-		slog("no valid entity or window");
+		slog("no valid entity or window or entity model");
 		return;
 	}
 
@@ -158,7 +160,7 @@ void entityDrawAll()
 	 {
 		continue;
 	 }
-	 entityList[i].draw(&entityList[i], window);
+  entityList[i].draw(entityList[i].model, window,entityList[i].model->position,entityList[i].model->orientation);
 	}
 
  }

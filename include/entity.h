@@ -12,7 +12,7 @@
 typedef struct Entity_S
 {
 	int inuse; 
-
+	Model_S* model;
 	glm::vec3 speed;       
 	glm::vec3 accel;        
 	glm::vec3 maxaccel;     
@@ -22,7 +22,7 @@ typedef struct Entity_S
 
 	int next_think;/**time index for next_think*/
 	int think_rate; /**how often to run think*/
-	void(*draw) (struct Entity_S *self, GLFWwindow* window); /**logic*<*/
+	void(*draw) (Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat orientation); /**logic*<*/
 	void(*think) (struct Entity_S *self); /**logic*<*/
 	void(*update) (struct Entity_S *self); /**physics*<*/
 	void(*touch) (struct Entity_S *self, struct Entity_S *other); /**collsions*<*/

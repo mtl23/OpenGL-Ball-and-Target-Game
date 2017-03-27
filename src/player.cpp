@@ -15,10 +15,10 @@
 	Player_S User;
 	memset(&User,0,sizeof(Player_S));
 	User.Ent = EntityNew();
-	User.Model = newModel("aiai.obj");
+	User.Ent->model = newModel("aiai.obj");
 	User.points = 0;
 	//User.Ent.update = UpdatePlayer;
-	//User.Ent.draw = DrawPlayer;
+	User.Ent->draw = drawModel;
 	//User.Ent.think = ThinkPlayer;
 	//User.Ent.touch = TouchPlayer;
 

@@ -130,7 +130,7 @@ Model_S* newModel( const char * path)
 }
 
 
-void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::vec3 orientation)
+void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat orientation)
 {
 		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
