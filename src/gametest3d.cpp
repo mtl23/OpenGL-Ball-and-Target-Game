@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include<iostream>
 
 // Include GLEW
 #include <GL/glew.h>
@@ -16,6 +17,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/norm.hpp>
+#include <lodepng.h>
 using namespace glm;
 
 #include "shader.hpp"
@@ -27,6 +29,7 @@ using namespace glm;
 #include "quaternion_utils.hpp"
 #include "graphics_glfw.h"
 #include "player.h"
+
 
 extern int entityMax;
 GLFWwindow* window ;
@@ -268,7 +271,18 @@ int main( void )
 //	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices3.size() * sizeof(unsigned short), &indices3[0] , GL_STATIC_DRAW);
 ///////////
 
+	char * filename = ("aiai.png");
+  std::vector<unsigned char> image; //the raw pixels
+  unsigned width, height;
+
+//decode
+  unsigned error = lodepng::decode(image, width, height, filename);
 	
+  //if there's an error, display it
+  if(error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+  else{
+  std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+  }
 	
 	// Initialize our little text library with the Holstein font
 	initText2D( "Holstein.DDS" );
