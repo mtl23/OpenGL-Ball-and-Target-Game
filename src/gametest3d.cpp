@@ -30,16 +30,16 @@ using namespace glm;
 
 extern int entityMax;
 GLFWwindow* window ;
-vec3 gPosition1(-5.00f, 5.0f, 15.0f); //the monkey
-vec3 gOrientation1;
+//vec3 gPosition1(-5.00f, 5.0f, 15.0f); //the monkey
+//vec3 gOrientation1;
+// 
+//vec3 gPosition2( 0.0f, 0.0f, -15.0f); // the stage
+//quat gOrientation2 = quat(0.71f,0.00f,-0.71f,0.00f);
+//
+//vec3 gPosition3( 0.0f, 7.0f, 20.0f); // the ball
+//quat gOrientation3;
  
-vec3 gPosition2( 0.0f, 0.0f, -15.0f); // the stage
-quat gOrientation2 = quat(0.71f,0.00f,-0.71f,0.00f);
-
-vec3 gPosition3( 0.0f, 7.0f, 20.0f); // the ball
-quat gOrientation3;
- 
-bool gLookAtOther = true;
+//bool gLookAtOther = true;
 
 // The ARB_debug_output extension, which is used in this tutorial as an example,
 // can call a function of ours with error messages.
@@ -148,142 +148,127 @@ int main( void )
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
 
-	// Get a handle for our "MVP" uniform
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
-	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
-
-	// Load the texture
-	GLuint Texture = loadDDS("uvmap.DDS");
-	GLuint Texture2 = loadBMP_custom("uvtemplate.bmp");
-
-	// Get a handle for our "myTextureSampler" uniform
-	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
 
 
 //////////////////monkey setups
-	// Read our .obj file
-	std::vector<glm::vec3> vertices;
-	std::vector<glm::vec2> uvs;
-	std::vector<glm::vec3> normals;
-	bool res = loadOBJ("aiai.obj", vertices, uvs, normals);
-	
-	std::vector<unsigned short> indices;
-	std::vector<glm::vec3> indexed_vertices;
-	std::vector<glm::vec2> indexed_uvs;
-	std::vector<glm::vec3> indexed_normals;
-	indexVBO(vertices, uvs, normals, indices, indexed_vertices, indexed_uvs, indexed_normals);
-
-	// Load it into a VBO
-
-	GLuint vertexbuffer;
-	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, indexed_vertices.size() * sizeof(glm::vec3), &indexed_vertices[0], GL_STATIC_DRAW);
-
-	GLuint uvbuffer;
-	glGenBuffers(1, &uvbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-	glBufferData(GL_ARRAY_BUFFER, indexed_uvs.size() * sizeof(glm::vec2), &indexed_uvs[0], GL_STATIC_DRAW);
-
-	GLuint normalbuffer;
-	glGenBuffers(1, &normalbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-	glBufferData(GL_ARRAY_BUFFER, indexed_normals.size() * sizeof(glm::vec3), &indexed_normals[0], GL_STATIC_DRAW);
-
-	// Generate a buffer for the indices as well
-	GLuint elementbuffer;
-	glGenBuffers(1, &elementbuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0] , GL_STATIC_DRAW);
-
-/////////// end monkey setups
-
-//////////////////////////// the stage setups
-
-	
-	// Read our .obj file
-	std::vector<glm::vec3> vertices2;
-	std::vector<glm::vec2> uvs2;
-	std::vector<glm::vec3> normals2;
-	bool res2 = loadOBJ("model.obj", vertices2, uvs2, normals2);
-
-
-	std::vector<unsigned short> indices2;
-	std::vector<glm::vec3> indexed_vertices2;
-	std::vector<glm::vec2> indexed_uvs2;
-	std::vector<glm::vec3> indexed_normals2;
-	indexVBO(vertices2, uvs2, normals, indices2, indexed_vertices2, indexed_uvs2, indexed_normals2);
-
-	// Load it into a VBO
-
-	GLuint vertexbuffer2;
-	glGenBuffers(1, &vertexbuffer2);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
-	glBufferData(GL_ARRAY_BUFFER, indexed_vertices2.size() * sizeof(glm::vec3), &indexed_vertices2[0], GL_STATIC_DRAW);
-
-	GLuint uvbuffer2;
-	glGenBuffers(1, &uvbuffer2);
-	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer2);
-	glBufferData(GL_ARRAY_BUFFER, indexed_uvs2.size() * sizeof(glm::vec2), &indexed_uvs2[0], GL_STATIC_DRAW);
-
-	GLuint normalbuffer2;
-	glGenBuffers(1, &normalbuffer2);
-	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer2);
-	glBufferData(GL_ARRAY_BUFFER, indexed_normals2.size() * sizeof(glm::vec3), &indexed_normals2[0], GL_STATIC_DRAW);
-
-	// Generate a buffer for the indices as well
-	GLuint elementbuffer2;
-	glGenBuffers(1, &elementbuffer2);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices2.size() * sizeof(unsigned short), &indices2[0] , GL_STATIC_DRAW);
-	///////////////end stage setups
-
-	
-	//////////////////////////// the ball setups	
-	// Read our .obj file
-	std::vector<glm::vec3> vertices3;
-	std::vector<glm::vec2> uvs3;
-	std::vector<glm::vec3> normals3;
-
-	std::vector<unsigned short> indices3;
-	std::vector<glm::vec3> indexed_vertices3;
-	std::vector<glm::vec2> indexed_uvs3;
-	std::vector<glm::vec3> indexed_normals3;
-
-	bool res3 = loadOBJ("ballkirby.obj", vertices3, uvs3, normals3);
-	indexVBO(vertices3, uvs3, normals, indices3, indexed_vertices3, indexed_uvs3, indexed_normals3);
-
-	// Load it into a VBO
-
-	GLuint vertexbuffer3;
-	glGenBuffers(1, &vertexbuffer3);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
-	glBufferData(GL_ARRAY_BUFFER, indexed_vertices3.size() * sizeof(glm::vec3), &indexed_vertices3[0], GL_STATIC_DRAW);
-
-	GLuint uvbuffer3;
-	glGenBuffers(1, &uvbuffer3);
-	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer3);
-	glBufferData(GL_ARRAY_BUFFER, indexed_uvs3.size() * sizeof(glm::vec2), &indexed_uvs3[0], GL_STATIC_DRAW);
-
-	GLuint normalbuffer3;
-	glGenBuffers(1, &normalbuffer3);
-	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer3);
-	glBufferData(GL_ARRAY_BUFFER, indexed_normals3.size() * sizeof(glm::vec3), &indexed_normals3[0], GL_STATIC_DRAW);
-
-	// Generate a buffer for the indices as well
-	GLuint elementbuffer3;
-	glGenBuffers(1, &elementbuffer3);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices3.size() * sizeof(unsigned short), &indices3[0] , GL_STATIC_DRAW);
+//	// Read our .obj file
+//	std::vector<glm::vec3> vertices;
+//	std::vector<glm::vec2> uvs;
+//	std::vector<glm::vec3> normals;
+//	bool res = loadOBJ("aiai.obj", vertices, uvs, normals);
+//	
+//	std::vector<unsigned short> indices;
+//	std::vector<glm::vec3> indexed_vertices;
+//	std::vector<glm::vec2> indexed_uvs;
+//	std::vector<glm::vec3> indexed_normals;
+//	indexVBO(vertices, uvs, normals, indices, indexed_vertices, indexed_uvs, indexed_normals);
+//
+//	// Load it into a VBO
+//
+//	GLuint vertexbuffer;
+//	glGenBuffers(1, &vertexbuffer);
+//	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+//	glBufferData(GL_ARRAY_BUFFER, indexed_vertices.size() * sizeof(glm::vec3), &indexed_vertices[0], GL_STATIC_DRAW);
+//
+//	GLuint uvbuffer;
+//	glGenBuffers(1, &uvbuffer);
+//	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+//	glBufferData(GL_ARRAY_BUFFER, indexed_uvs.size() * sizeof(glm::vec2), &indexed_uvs[0], GL_STATIC_DRAW);
+//
+//	GLuint normalbuffer;
+//	glGenBuffers(1, &normalbuffer);
+//	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+//	glBufferData(GL_ARRAY_BUFFER, indexed_normals.size() * sizeof(glm::vec3), &indexed_normals[0], GL_STATIC_DRAW);
+//
+//	// Generate a buffer for the indices as well
+//	GLuint elementbuffer;
+//	glGenBuffers(1, &elementbuffer);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0] , GL_STATIC_DRAW);
+//
+///////////// end monkey setups
+//
+////////////////////////////// the stage setups
+//
+//	
+//	// Read our .obj file
+//	std::vector<glm::vec3> vertices2;
+//	std::vector<glm::vec2> uvs2;
+//	std::vector<glm::vec3> normals2;
+//	bool res2 = loadOBJ("model.obj", vertices2, uvs2, normals2);
+//
+//
+//	std::vector<unsigned short> indices2;
+//	std::vector<glm::vec3> indexed_vertices2;
+//	std::vector<glm::vec2> indexed_uvs2;
+//	std::vector<glm::vec3> indexed_normals2;
+//	indexVBO(vertices2, uvs2, normals, indices2, indexed_vertices2, indexed_uvs2, indexed_normals2);
+//
+//	// Load it into a VBO
+//
+//	GLuint vertexbuffer2;
+//	glGenBuffers(1, &vertexbuffer2);
+//	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
+//	glBufferData(GL_ARRAY_BUFFER, indexed_vertices2.size() * sizeof(glm::vec3), &indexed_vertices2[0], GL_STATIC_DRAW);
+//
+//	GLuint uvbuffer2;
+//	glGenBuffers(1, &uvbuffer2);
+//	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer2);
+//	glBufferData(GL_ARRAY_BUFFER, indexed_uvs2.size() * sizeof(glm::vec2), &indexed_uvs2[0], GL_STATIC_DRAW);
+//
+//	GLuint normalbuffer2;
+//	glGenBuffers(1, &normalbuffer2);
+//	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer2);
+//	glBufferData(GL_ARRAY_BUFFER, indexed_normals2.size() * sizeof(glm::vec3), &indexed_normals2[0], GL_STATIC_DRAW);
+//
+//	// Generate a buffer for the indices as well
+//	GLuint elementbuffer2;
+//	glGenBuffers(1, &elementbuffer2);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices2.size() * sizeof(unsigned short), &indices2[0] , GL_STATIC_DRAW);
+//	///////////////end stage setups
+//
+//	
+//	//////////////////////////// the ball setups	
+//	// Read our .obj file
+//	std::vector<glm::vec3> vertices3;
+//	std::vector<glm::vec2> uvs3;
+//	std::vector<glm::vec3> normals3;
+//
+//	std::vector<unsigned short> indices3;
+//	std::vector<glm::vec3> indexed_vertices3;
+//	std::vector<glm::vec2> indexed_uvs3;
+//	std::vector<glm::vec3> indexed_normals3;
+//
+//	bool res3 = loadOBJ("ballkirby.obj", vertices3, uvs3, normals3);
+//	indexVBO(vertices3, uvs3, normals, indices3, indexed_vertices3, indexed_uvs3, indexed_normals3);
+//
+//	// Load it into a VBO
+//
+//	GLuint vertexbuffer3;
+//	glGenBuffers(1, &vertexbuffer3);
+//	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
+//	glBufferData(GL_ARRAY_BUFFER, indexed_vertices3.size() * sizeof(glm::vec3), &indexed_vertices3[0], GL_STATIC_DRAW);
+//
+//	GLuint uvbuffer3;
+//	glGenBuffers(1, &uvbuffer3);
+//	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer3);
+//	glBufferData(GL_ARRAY_BUFFER, indexed_uvs3.size() * sizeof(glm::vec2), &indexed_uvs3[0], GL_STATIC_DRAW);
+//
+//	GLuint normalbuffer3;
+//	glGenBuffers(1, &normalbuffer3);
+//	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer3);
+//	glBufferData(GL_ARRAY_BUFFER, indexed_normals3.size() * sizeof(glm::vec3), &indexed_normals3[0], GL_STATIC_DRAW);
+//
+//	// Generate a buffer for the indices as well
+//	GLuint elementbuffer3;
+//	glGenBuffers(1, &elementbuffer3);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices3.size() * sizeof(unsigned short), &indices3[0] , GL_STATIC_DRAW);
 ///////////
 
-	// Get a handle for our "LightPosition" uniform
-	glUseProgram(programID);
-	GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+	
 	
 	// Initialize our little text library with the Holstein font
 	initText2D( "Holstein.DDS" );
@@ -319,263 +304,258 @@ int main( void )
 		////// Start of the rendering of the first object //////
 		
 		// Use our shader
-		glUseProgram(programID);
+	//	glUseProgram(programID);
 	
 		//glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]); // This one doesn't change between objects, so this can be done once for all objects that use "programID"
 		
-			glm::mat4 ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-			glm::mat4 ViewMatrix = glm::lookAt(
-			glm::vec3( 0, 20, 37 ), // Camera is here
-			glm::vec3( 0, 0, 0 ), // and looks here
-			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
-		);
-
-		//// Send our transformation to the currently bound shader, 
+				//// Send our transformation to the currently bound shader, 
 		//// in the "MVP" uniform wth INPUTS
 		//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP1[0][0]);
 		//glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix1[0][0]);
 
 		// Bind our texture in Texture Unit 0
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, Texture);
+	/*	glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Texture);*/
 		// Set our "myTextureSampler" sampler to user Texture Unit 0
-		glUniform1i(TextureID, 0);
-
-		// 1rst attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(
-			0,                  // attribute
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-
-		// 2nd attribute buffer : UVs
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-		glVertexAttribPointer(
-			1,                                // attribute
-			2,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
-		);
-
-		// 3rd attribute buffer : normals
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-		glVertexAttribPointer(
-			2,                                // attribute
-			3,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
-		);
-
-		// Index buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-
-		glm::vec3 lightPos = glm::vec3(0,-16,-24);
-		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-		
-
-{ // Euler
- 
-			// As an example, rotate arount the vertical axis at 180°/sec
-			gOrientation1.y += 3.14159f/2.0f * deltaTime;
- 
-			// Build the model matrix
-			glm::mat4 RotationMatrix = eulerAngleYXZ(gOrientation1.y, gOrientation1.x, gOrientation1.z);
-			glm::mat4 TranslationMatrix = translate(mat4(), gPosition1); // A bit to the left
-			glm::mat4 ScalingMatrix = scale(mat4(), vec3(1.0f, 1.0f, 1.0f));
-			glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
- 
-			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
- 
-			// Send our transformation to the currently bound shader, 
-			// in the "MVP" uniform
-			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
- 
-			// Draw the triangles !
-			glDrawElements(
-				GL_TRIANGLES,      // mode
-				indices.size(),    // count
-				GL_UNSIGNED_SHORT,   // type
-				(void*)0           // element array buffer offset
-			);
- 
-		}
-
-////// End of rendering of the first object //////
-
-////// Start of the rendering of the second object //////
-
-// 1rst attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
-		glVertexAttribPointer(
-			0,                  // attribute
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-
-		// 2nd attribute buffer : UVs
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer2);
-		glVertexAttribPointer(
-			1,                                // attribute
-			2,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
-		);
-
-		// 3rd attribute buffer : normals
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer2);
-		glVertexAttribPointer(
-			2,                                // attribute
-			3,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
-		);
-
-		// Index buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
-
-		glm::vec3 lightPos2 = glm::vec3(-16,-8,-24);
-		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-{ // Quaternion
- 
-			// It the box is checked...
-		//	if (gLookAtOther){
-				// desiredDir = gPosition1-gPosition2;
-				//vec3 desiredUp = vec3(0.0f, 1.0f, 0.0f); // +Y
- 
-				// Compute the desired orientation
-			//	quat targetOrientation = normalize(LookAt(desiredDir, desiredUp));
- 
-				// And interpolate
-				//gOrientation2 = RotateTowards(gOrientation2, targetOrientation, 1.0f*deltaTime);
-	//		}
-			//gOrientation2 = quat(0.71f,0.00f,-0.71f,0.00f); // (S,X,Y,Z)// change me with input
-			glm::mat4 RotationMatrix = mat4_cast(gOrientation2);
-			glm::mat4 TranslationMatrix = translate(mat4(), gPosition2); // A bit to the right
-			glm::mat4 ScalingMatrix = scale(mat4(), vec3(3.0f, 3.0f, 3.0f));
-			glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
- 
-			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
- 
-			// Send our transformation to the currently bound shader, 
-			// in the "MVP" uniform
-			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-  
-			// Draw the triangles !
-			glDrawElements(
-				GL_TRIANGLES,      // mode
-				indices2.size(),    // count
-				GL_UNSIGNED_SHORT,   // type
-				(void*)0           // element array buffer offset
-			);
-		}
-
-////// End of rendering of the second object //////
-//// Start of rendering of the third object //////
-
-		// Bind our texture in Texture Unit 0
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, Texture2);
-		// Set our "myTextureSampler" sampler to user Texture Unit 0
-		glUniform1i(TextureID, 0);
-
-// 1rst attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
-		glVertexAttribPointer(
-			0,                  // attribute
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-
-		// 2nd attribute buffer : UVs
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer3);
-		glVertexAttribPointer(
-			1,                                // attribute
-			2,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
-		);
-
-		// 3rd attribute buffer : normals
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer3);
-		glVertexAttribPointer(
-			2,                                // attribute
-			3,                                // size
-			GL_FLOAT,                         // type
-			GL_FALSE,                         // normalized?
-			0,                                // stride
-			(void*)0                          // array buffer offset
-		);
-
-		// Index buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
-
-		glm::vec3 lightPos3 = glm::vec3(16,-8,-24);
-		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-
-		glm::mat4 RotationMatrix = mat4_cast(gOrientation3);
-		glm::mat4 TranslationMatrix = translate(mat4(), gPosition3); // places into position
-		glm::mat4 ScalingMatrix = scale(mat4(), vec3(.25f, .25f, .25f)); //here we sacle
-		glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
- 
-		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
- 
-			// Send our transformation to the currently bound shader, 
-			// in the "MVP" uniform
-			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
- 
- 
-			// Draw the triangles !
-			glDrawElements(
-				GL_TRIANGLES,      // mode
-				indices3.size(),    // count
-				GL_UNSIGNED_SHORT,   // type
-				(void*)0           // element array buffer offset
-			);
-			
-/////////////////// End of rendering of the third object //////
-
-
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
-
+		/*glUniform1i(TextureID, 0);
+*/
+//		// 1rst attribute buffer : vertices
+//		glEnableVertexAttribArray(0);
+//		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+//		glVertexAttribPointer(
+//			0,                  // attribute
+//			3,                  // size
+//			GL_FLOAT,           // type
+//			GL_FALSE,           // normalized?
+//			0,                  // stride
+//			(void*)0            // array buffer offset
+//		);
+//
+//		// 2nd attribute buffer : UVs
+//		glEnableVertexAttribArray(1);
+//		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+//		glVertexAttribPointer(
+//			1,                                // attribute
+//			2,                                // size
+//			GL_FLOAT,                         // type
+//			GL_FALSE,                         // normalized?
+//			0,                                // stride
+//			(void*)0                          // array buffer offset
+//		);
+//
+//		// 3rd attribute buffer : normals
+//		glEnableVertexAttribArray(2);
+//		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+//		glVertexAttribPointer(
+//			2,                                // attribute
+//			3,                                // size
+//			GL_FLOAT,                         // type
+//			GL_FALSE,                         // normalized?
+//			0,                                // stride
+//			(void*)0                          // array buffer offset
+//		);
+//
+//		// Index buffer
+//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+//
+//		glm::vec3 lightPos = glm::vec3(0,-16,-24);
+//		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+//		
+//
+//{ // Euler
+// 
+//			// As an example, rotate arount the vertical axis at 180°/sec
+//			gOrientation1.y += 3.14159f/2.0f * deltaTime;
+// 
+//			// Build the model matrix
+//			glm::mat4 RotationMatrix = eulerAngleYXZ(gOrientation1.y, gOrientation1.x, gOrientation1.z);
+//			glm::mat4 TranslationMatrix = translate(mat4(), gPosition1); // A bit to the left
+//			glm::mat4 ScalingMatrix = scale(mat4(), vec3(1.0f, 1.0f, 1.0f));
+//			glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
+// 
+//			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+// 
+//			// Send our transformation to the currently bound shader, 
+//			// in the "MVP" uniform
+//			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+//			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+//			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+// 
+//			// Draw the triangles !
+//			glDrawElements(
+//				GL_TRIANGLES,      // mode
+//				indices.size(),    // count
+//				GL_UNSIGNED_SHORT,   // type
+//				(void*)0           // element array buffer offset
+//			);
+// 
+//		}
+//
+//////// End of rendering of the first object //////
+//
+//////// Start of the rendering of the second object //////
+//
+//// 1rst attribute buffer : vertices
+//		glEnableVertexAttribArray(0);
+//		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
+//		glVertexAttribPointer(
+//			0,                  // attribute
+//			3,                  // size
+//			GL_FLOAT,           // type
+//			GL_FALSE,           // normalized?
+//			0,                  // stride
+//			(void*)0            // array buffer offset
+//		);
+//
+//		// 2nd attribute buffer : UVs
+//		glEnableVertexAttribArray(1);
+//		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer2);
+//		glVertexAttribPointer(
+//			1,                                // attribute
+//			2,                                // size
+//			GL_FLOAT,                         // type
+//			GL_FALSE,                         // normalized?
+//			0,                                // stride
+//			(void*)0                          // array buffer offset
+//		);
+//
+//		// 3rd attribute buffer : normals
+//		glEnableVertexAttribArray(2);
+//		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer2);
+//		glVertexAttribPointer(
+//			2,                                // attribute
+//			3,                                // size
+//			GL_FLOAT,                         // type
+//			GL_FALSE,                         // normalized?
+//			0,                                // stride
+//			(void*)0                          // array buffer offset
+//		);
+//
+//		// Index buffer
+//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
+//
+//		glm::vec3 lightPos2 = glm::vec3(-16,-8,-24);
+//		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+//{ // Quaternion
+// 
+//			// It the box is checked...
+//		//	if (gLookAtOther){
+//				// desiredDir = gPosition1-gPosition2;
+//				//vec3 desiredUp = vec3(0.0f, 1.0f, 0.0f); // +Y
+// 
+//				// Compute the desired orientation
+//			//	quat targetOrientation = normalize(LookAt(desiredDir, desiredUp));
+// 
+//				// And interpolate
+//				//gOrientation2 = RotateTowards(gOrientation2, targetOrientation, 1.0f*deltaTime);
+//	//		}
+//			//gOrientation2 = quat(0.71f,0.00f,-0.71f,0.00f); // (S,X,Y,Z)// change me with input
+//			glm::mat4 RotationMatrix = mat4_cast(gOrientation2);
+//			glm::mat4 TranslationMatrix = translate(mat4(), gPosition2); // A bit to the right
+//			glm::mat4 ScalingMatrix = scale(mat4(), vec3(3.0f, 3.0f, 3.0f));
+//			glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
+// 
+//			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+// 
+//			// Send our transformation to the currently bound shader, 
+//			// in the "MVP" uniform
+//			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+//			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+//			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+//  
+//			// Draw the triangles !
+//			glDrawElements(
+//				GL_TRIANGLES,      // mode
+//				indices2.size(),    // count
+//				GL_UNSIGNED_SHORT,   // type
+//				(void*)0           // element array buffer offset
+//			);
+//		}
+//
+//////// End of rendering of the second object //////
+////// Start of rendering of the third object //////
+//
+//		// Bind our texture in Texture Unit 0
+//		glActiveTexture(GL_TEXTURE0);
+//		glBindTexture(GL_TEXTURE_2D, Texture2);
+//		// Set our "myTextureSampler" sampler to user Texture Unit 0
+//		glUniform1i(TextureID, 0);
+//
+//// 1rst attribute buffer : vertices
+//		glEnableVertexAttribArray(0);
+//		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
+//		glVertexAttribPointer(
+//			0,                  // attribute
+//			3,                  // size
+//			GL_FLOAT,           // type
+//			GL_FALSE,           // normalized?
+//			0,                  // stride
+//			(void*)0            // array buffer offset
+//		);
+//
+//		// 2nd attribute buffer : UVs
+//		glEnableVertexAttribArray(1);
+//		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer3);
+//		glVertexAttribPointer(
+//			1,                                // attribute
+//			2,                                // size
+//			GL_FLOAT,                         // type
+//			GL_FALSE,                         // normalized?
+//			0,                                // stride
+//			(void*)0                          // array buffer offset
+//		);
+//
+//		// 3rd attribute buffer : normals
+//		glEnableVertexAttribArray(2);
+//		glBindBuffer(GL_ARRAY_BUFFER, normalbuffer3);
+//		glVertexAttribPointer(
+//			2,                                // attribute
+//			3,                                // size
+//			GL_FLOAT,                         // type
+//			GL_FALSE,                         // normalized?
+//			0,                                // stride
+//			(void*)0                          // array buffer offset
+//		);
+//
+//		// Index buffer
+//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
+//
+//		glm::vec3 lightPos3 = glm::vec3(16,-8,-24);
+//		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+//
+//		glm::mat4 RotationMatrix = mat4_cast(gOrientation3);
+//		glm::mat4 TranslationMatrix = translate(mat4(), gPosition3); // places into position
+//		glm::mat4 ScalingMatrix = scale(mat4(), vec3(.25f, .25f, .25f)); //here we sacle
+//		glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
+// 
+//		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+// 
+//			// Send our transformation to the currently bound shader, 
+//			// in the "MVP" uniform
+//			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+//			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+//			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+// 
+// 
+//			// Draw the triangles !
+//			glDrawElements(
+//				GL_TRIANGLES,      // mode
+//				indices3.size(),    // count
+//				GL_UNSIGNED_SHORT,   // type
+//				(void*)0           // element array buffer offset
+//			);
+//			
+///////////////////// End of rendering of the third object //////
+//
+//
+//		glDisableVertexAttribArray(0);
+//		glDisableVertexAttribArray(1);
+//		glDisableVertexAttribArray(2);
+//
 		// Draw GUI
 		//TwDraw();
+
+	entityDrawAll();
 
 		char text[256];
 		sprintf(text,"%.2f sec", glfwGetTime() );
@@ -590,12 +570,12 @@ int main( void )
 		   glfwWindowShouldClose(window) == 0 );
 
 	// Cleanup VBO and shader
-	glDeleteBuffers(1, &vertexbuffer);
-	glDeleteBuffers(1, &uvbuffer);
-	glDeleteProgram(programID);
-	glDeleteBuffers(1, &normalbuffer);
-	glDeleteBuffers(1, &elementbuffer);
-	glDeleteTextures(1, &TextureID);
+	//glDeleteBuffers(1, &vertexbuffer);
+	//glDeleteBuffers(1, &uvbuffer);
+//	glDeleteProgram(programID);
+//	glDeleteBuffers(1, &normalbuffer);
+	//glDeleteBuffers(1, &elementbuffer);
+	//glDeleteTextures(1, &TextureID);
 	glDeleteVertexArrays(1, &VertexArrayID);
 	//closeModelSystem();
 	CloseEntitySystem();

@@ -79,6 +79,7 @@ Entity_S* EntityNew()
 		 numEntity++;
 		 entityList[i].accel = glm::vec3(0,0,0);
 		entityList[i].inuse = 1;
+		entityList[i].draw  = drawModel;
 		 return &entityList[i];
 	}
 	return NULL;
@@ -107,7 +108,7 @@ void entityDraw(Entity_S *entity,GLFWwindow* window, glm::vec3 position, glm::ve
 	}
 
 	
-//	drawModel(&entity->Model,window,position,orientation);
+	drawModel(entity->model,window,entity->model->position,entity->model->orientation);
 }
 
 void entityThinkAll()

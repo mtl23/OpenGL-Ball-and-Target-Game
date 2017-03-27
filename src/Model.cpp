@@ -7,6 +7,8 @@
 #include <graphics_glfw.h>
 #include <vector>
 #include "objloader.hpp"
+#include "shader.hpp"
+#include "texture.hpp"
 using namespace glm;
 
 #include "quaternion_utils.hpp"
@@ -132,16 +134,38 @@ Model_S* newModel( const char * path)
 
 void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat orientation)
 {
+		// Create and compile our GLSL program from the shaders
+	GLuint programID = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
+	model->position = position;
+	model->orientation = orientation;
+	// Get a handle for our "MVP" uniform
+	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
+	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
+
+	// Load the texture
+	GLuint Texture = loadDDS("uvmap.DDS");
+	//GLuint Texture2 = loadBMP_custom("uvtemplate.bmp");
+
+	// Get a handle for our "myTextureSampler" uniform
+	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
+
 		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, model->Texture);
 		// Set our "myTextureSampler" sampler to user Texture Unit 0
 		glUniform1i(model->Texture, 0);
 
-	GLuint programID2 = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
-	GLuint MatrixID = glGetUniformLocation(programID2, "MVP");
-	GLuint ViewMatrixID = glGetUniformLocation(programID2, "V");
-	GLuint ModelMatrixID = glGetUniformLocation(programID2, "M");
+		glm::mat4 ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+			glm::mat4 ViewMatrix = glm::lookAt(
+			glm::vec3( 0, 20, 37 ), // Camera is here
+			glm::vec3( 0, 0, 0 ), // and looks here
+			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+		);
+
+			// Get a handle for our "LightPosition" uniform
+	glUseProgram(programID);
+	GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
 // 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
@@ -181,22 +205,12 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 
 		// Index buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->elementbuffer);
-		GLuint LightID = glGetUniformLocation(programID2, "LightPosition_worldspace");
-		glUseProgram(programID2);
-
-			glm::mat4 ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-			glm::mat4 ViewMatrix = glm::lookAt(
-			glm::vec3( 0, 20, 37 ), // Camera is here
-			glm::vec3( 0, 0, 0 ), // and looks here
-			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
-		);
-
 		glm::vec3 lightPos = glm::vec3(16,-8,-24);
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		glm::mat4 RotationMatrix = mat4_cast(model->orientation);
 		glm::mat4 TranslationMatrix = translate(mat4(), model->position); // places into position
-		glm::mat4 ScalingMatrix = scale(mat4(), vec3(.25f, .25f, .25f)); //here we sacle
+		glm::mat4 ScalingMatrix = scale(mat4(), vec3(5, 5, 5)); //here we sacle
 		glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
  
