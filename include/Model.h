@@ -42,7 +42,7 @@ typedef struct Model_S
 
 void initModelSystem();
 void closeModelSystem();
-Model_S* newModel(const char * path);
+Model_S* newModel( const char * path, const char * texture );
 void freeModel(Model_S*);
 Model_S* loadModel(const char * path);
 void drawModel(Model_S* model,GLFWwindow* window, glm::vec3 position, glm::quat orientation);

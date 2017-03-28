@@ -34,7 +34,7 @@ void(*free) (struct Entity *self); /**cleanup function call on free*<*/
  * @brief creates player object 
  * @return a new player object
  */
-Player_S* newPlayer();
+Player_S* newPlayer(char* path,char* texture, glm::vec3 position, glm::quat orientation);
 
 /**
  * @brief frees player object data

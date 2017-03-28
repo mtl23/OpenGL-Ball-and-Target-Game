@@ -101,7 +101,7 @@ int main( void )
 	initModelSystem();
 
 //	Entity_S p1 = EntityNew();
-	Player_S* p2 = newPlayer();
+	Player_S* p2 = newPlayer("aiai.obj","uvmap.DDS",glm::vec3(-5.00f, 5.0f, 15.0f),glm::quat (0,0,0,0));
 
 	// Initialize the GUI
 	/*TwInit(TW_OPENGL_CORE, NULL);

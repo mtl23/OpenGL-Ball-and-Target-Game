@@ -72,7 +72,7 @@ modelMax = 0;
 }
 
 
-Model_S* newModel( const char * path)
+Model_S* newModel( const char * path, const char * texture )
 {
 	int i;
 
@@ -114,19 +114,25 @@ Model_S* newModel( const char * path)
 	glGenBuffers(1, &modelList[i].vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, modelList[i].vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, modelList[i].indexed_vertices.size() * sizeof(glm::vec3), &modelList[i].indexed_vertices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER,0);
 
 	glGenBuffers(1, &modelList[i].uvbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, modelList[i].uvbuffer);
 	glBufferData(GL_ARRAY_BUFFER, modelList[i].indexed_uvs.size() * sizeof(glm::vec2), &modelList[i].indexed_uvs[0], GL_STATIC_DRAW);
-	
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+
 	glGenBuffers(1, &modelList[i].normalbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, modelList[i].normalbuffer);
 	glBufferData(GL_ARRAY_BUFFER, modelList[i].indexed_normals.size() * sizeof(glm::vec3), &modelList[i].indexed_normals[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER,0);
 
 	// Generate a buffer for the indices as well
 	glGenBuffers(1, &modelList[i].elementbuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, modelList[i].elementbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, modelList[i].indices.size() * sizeof(unsigned short), &modelList[i].indices[0] , GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+
+	modelList[i].Texture = loadDDS(texture);
 
 	return &modelList[i];
 }
