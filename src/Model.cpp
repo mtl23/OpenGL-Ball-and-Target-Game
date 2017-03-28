@@ -237,5 +237,7 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
+		//glDeleteProgram(programID);
+		//glDeleteTextures(1, &TextureID);
 
 }
