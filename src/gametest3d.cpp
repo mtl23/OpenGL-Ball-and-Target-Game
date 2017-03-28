@@ -101,8 +101,9 @@ int main( void )
 	initModelSystem();
 
 //	Entity_S p1 = EntityNew();
-	Player_S* p2 = newPlayer("aiai.obj","uvmap.DDS",glm::vec3(-5.00f, 5.0f, 15.0f),glm::quat (0,0,0,0));
-
+	Player_S* p2 = newPlayer("aiai.obj","uvmap.DDS",glm::vec3(-5.00f, 5.0f, 15.0f),glm::vec3(1,1,1),glm::quat (-.14f,0.02f,-0.97f,-0.2f));
+	Player_S* p1 = newPlayer("model.obj","uvmap.DDS",glm::vec3(0,0,-15),glm::vec3(3,3,3),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	Player_S* p3 = newPlayer("ballkirby.obj","uvmap.DDS",glm::vec3(-5.00f, 5.0f, 15.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
 	// Initialize the GUI
 	/*TwInit(TW_OPENGL_CORE, NULL);
 	TwWindowSize(1024, 768);

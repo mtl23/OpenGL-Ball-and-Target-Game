@@ -35,6 +35,7 @@ typedef struct Model_S
 
 	GLuint Texture;
 	glm::vec3 position;
+	glm::vec3 scale;
 	glm::quat orientation;
 
 

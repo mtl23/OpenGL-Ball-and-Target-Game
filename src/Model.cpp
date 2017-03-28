@@ -142,8 +142,7 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 {
 		// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
-	model->position = position;
-	model->orientation = orientation;
+
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
@@ -216,7 +215,7 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 
 		glm::mat4 RotationMatrix = mat4_cast(model->orientation);
 		glm::mat4 TranslationMatrix = translate(mat4(), model->position); // places into position
-		glm::mat4 ScalingMatrix = scale(mat4(), vec3(5, 5, 5)); //here we sacle
+		glm::mat4 ScalingMatrix = scale(mat4(), model->scale); //here we sacle
 		glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
  

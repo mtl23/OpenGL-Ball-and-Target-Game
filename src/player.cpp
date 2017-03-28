@@ -9,7 +9,7 @@
 #include "player.h"
 
 
- Player_S* newPlayer(char* path,char* texture, glm::vec3 position, glm::quat orientation) //use a pointer
+ Player_S* newPlayer(char* path,char* texture, glm::vec3 position,glm::vec3 scale, glm::quat orientation) //use a pointer
 {
 
 	Player_S User;
@@ -23,6 +23,7 @@
 	//User.Ent.touch = TouchPlayer;
 	User.Ent->model->orientation = orientation;
 	User.Ent->model->position = position;
+	User.Ent->model->scale = scale;
 
 return &User;
 }
