@@ -30,6 +30,12 @@ using namespace glm;
 #include "graphics_glfw.h"
 #include "player.h"
 
+#include "PxPhysics.h"
+#include "PxScene.h"
+#include "PxRigidDynamic.h"
+#include "PxShape.h"
+#include "PxPhysicsAPI.h"
+
 
 
 extern int entityMax;
