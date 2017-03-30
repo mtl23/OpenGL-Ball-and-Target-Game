@@ -35,7 +35,9 @@ using namespace glm;
 #include "PxRigidDynamic.h"
 #include "PxShape.h"
 #include "PxPhysicsAPI.h"
-
+#include <pxphysicsapi.h>
+#include <pxdefaulterrorcallback.h>
+#include <pxdefaultallocator.h>
 
 
 extern int entityMax;

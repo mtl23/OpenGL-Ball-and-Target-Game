@@ -86,7 +86,7 @@
     <IntDir>$(ProjectDir)\..</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\mtl23\Desktop\PhysX-3.4-master\PxShared\include;C:\Users\mtl23\Desktop\PhysX-3.4-master;D:\PhysX-3.4-master\PhysX_3.4\Include;C:\Users\mtl23\Desktop\IT485\jansson\include;C:\Users\mtl23\Desktop\IT485\gametest3d-master\include;C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\include;C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\mtl23\Desktop\PhysX-3.4-master\PhysX_3.4\Include\extensions;C:\Users\mtl23\Desktop\PhysX-3.4-master\PxShared\include;C:\Users\mtl23\Desktop\PhysX-3.4-master;D:\PhysX-3.4-master\PhysX_3.4\Include;C:\Users\mtl23\Desktop\IT485\jansson\include;C:\Users\mtl23\Desktop\IT485\gametest3d-master\include;C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\include;C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>C:\Program Files\Microsoft SDKs\Windows\v6.0A\Lib;C:\Users\mtl23\Desktop\IT485\jansson\lib\Release;C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\lib-vc2012;C:\Users\mtl23\Desktop\IT485\glew-2.0.0\lib\Release\Win32;C:\Users\mtl23\Desktop\IT485\lib;D:\PhysX-3.4-master\PhysX_3.4\Lib\vc12win32;$(LibraryPath)</LibraryPath>
