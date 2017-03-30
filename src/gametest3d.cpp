@@ -18,7 +18,20 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/norm.hpp>
 #include <lodepng.h>
+#include <PxPhysics.h>
+#include <PxScene.h>
+#include <PxRigidDynamic.h>
+#include <PxShape.h>
+#include <PxPhysicsAPI.h>
+#include <pxphysicsapi.h>
+#include <pxdefaulterrorcallback.h>
+#include <pxdefaultallocator.h>
+#include <PxTolerancesScale.h>
+#include <common/PxPhysXCommonConfig.h>
+#include <vehicle/PxVehicleSDK.h>
+
 using namespace glm;
+using namespace physx;
 
 #include "shader.hpp"
 #include "texture.hpp"
@@ -29,22 +42,52 @@ using namespace glm;
 #include "quaternion_utils.hpp"
 #include "graphics_glfw.h"
 #include "player.h"
-
-#include "PxPhysics.h"
-#include "PxScene.h"
-#include "PxRigidDynamic.h"
-#include "PxShape.h"
-#include "PxPhysicsAPI.h"
-#include <pxphysicsapi.h>
-#include <pxdefaulterrorcallback.h>
-#include <pxdefaultallocator.h>
+#include "simple_logger.h"
+#include"SDL_mixer.h"
 
 
 extern int entityMax;
+
 GLFWwindow* window ;
+//// Init Phy sx functions and parameters
+//static class PxPhysics* gPhysicsSDK = NULL;
+//static class PxDefaultErrorCallback gDefaultErrorCallback;
+//static class PxDefaultAllocator gDefaultAllocatorCallback;
+//
+//void InitializePhysX() {
+//	PxFoundation *mFoundation = NULL;
+//
+//	printf("creating Foundation\n");
+// // create foundation object with default error and allocator callbacks.
+// mFoundation = PxCreateFoundation(
+// PX_PHYSICS_VERSION,
+// gDefaultAllocatorCallback,
+// gDefaultErrorCallback);
+//
+//   gPhysicsSDK = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation,  PxTolerancesScale() );
+//   if(gPhysicsSDK == NULL) {
+// slog("Error creating PhysX device.");
+// slog("Exiting...");
+// exit(1);
+//   }
+//}
+//void ShutdownPhysX() {
+//   gPhysicsSDK->release();
+//}
+
+//end Physx init func & param
 
 int main( void )
 {
+	      //Initialize SDL_mixer
+                if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+                {
+                    printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
+                   
+                }
+
+  Mix_Music *level_music;
+  level_music = Mix_LoadMUS( "balrog.mid" );
 	// Initialise GLFW
 	if( !glfwInit() )
 	{
@@ -103,6 +146,15 @@ int main( void )
 		double currentTime = glfwGetTime();
 		float deltaTime = (float)(currentTime - lastFrameTime); 
 		lastFrameTime = currentTime;
+
+		  if( Mix_PlayingMusic() == 0 )
+                    {
+                        //Play the music
+                        if( Mix_PlayMusic( level_music, -1 ) == -1 )
+                        {
+                            return 1;
+                        } 
+					}
 
 		if ( currentTime - lastTime >= 1.0 ){ 
 
