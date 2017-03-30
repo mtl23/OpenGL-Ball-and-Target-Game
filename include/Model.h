@@ -13,6 +13,23 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/norm.hpp>
 
+/**
+ * @brief Mesh object blueprint form handling any 3D models
+ * @param filename of the model
+ * @param refcount of the model
+ * @param vector to hold model verticies
+ * @param vector to hold model texeles
+ * @param vector to hold model normals
+ * @param vector to hold model indicies
+ * @param vector to hold model indexed verticies
+ * @param vector to hold model indexed texeles
+ * @param vector to hold model indexed normals
+ * @param assigned vertex buffer
+ * @param assigned texel buffer
+ * @param assigned normal buffer
+ * @param assigned element buffer
+ */
+
 typedef struct Model_S
 {
 

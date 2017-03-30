@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 /**
 *@brief The data  structure for Entities 
+*@param
 */
 
 #include "Model.h"
@@ -20,7 +21,7 @@ typedef struct Entity_S
 	glm::vec3 minspeed;        
 	glm::vec3 maxspeed;        
 
-	int next_think;/**time index for next_think*/
+	int next_think;/**time index for next_think<*/
 	int think_rate; /**how often to run think*/
 	void(*draw) (Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat orientation); /**logic*<*/
 	void(*think) (struct Entity_S *self); /**logic*<*/

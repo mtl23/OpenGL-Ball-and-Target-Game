@@ -19,7 +19,7 @@
 	User.points = 0;
 	//User.Ent.update = UpdatePlayer;
 	User.Ent->draw = drawModel;
-	//User.Ent.think = ThinkPlayer;
+	User.Ent->think = ThinkPlayer;
 	//User.Ent.touch = TouchPlayer;
 	User.Ent->model->orientation = orientation;
 	User.Ent->model->position = position;

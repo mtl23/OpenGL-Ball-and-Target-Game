@@ -14,7 +14,6 @@ Entity_S *entityList = NULL;
 int numEntity = 0;
 int entityMax = 10;
 
-
 void InitEntitySystem(int EntityMax)
 {
 
@@ -58,7 +57,7 @@ Entity_S* EntityNew()
 	if(numEntity + 1 >= entityMax)
   {
       slog( "Maximum Entities Reached.");
-        exit(1);
+        return NULL;
   }
 	for( i= 0 ; i < entityMax; i++ )
 	{
@@ -77,9 +76,8 @@ Entity_S* EntityNew()
 			exit(1);
 		}
 		 numEntity++;
-		 entityList[i].accel = glm::vec3(0,0,0);
-		entityList[i].inuse = 1;
-		entityList[i].draw  = drawModel;
+		 entityList[i].inuse = 1;
+		 entityList[i].draw  = drawModel;
 		 return &entityList[i];
 	}
 	return NULL;
@@ -167,26 +165,33 @@ void entityDrawAll()
  }
 
 void ThinkPlayer(Entity_S* user)
-{}
+{
+}
+
 void TouchPlayer(Entity_S* user, Entity_S* other)
-{}
+{
+}
 
 void DrawPlayer(Entity_S* user, GLFWwindow* window)
-{}
+{
+}
 
 void UpdatePlayer(Entity_S* user)
-{}
-
+{
+}
 
 void ThinkObstacle(Entity_S* obstacle)
-{}
+{
+}
+
 void TouchObstacle(Entity_S* obstacle, Entity_S* user)
-{}
+{
+}
 
 void DrawObstacle(Entity_S* obstacle, GLFWwindow* window)
-{}
+{
+}
 
 void UpdateObstacle(Entity_S* obstacles)
 {
-	
 }

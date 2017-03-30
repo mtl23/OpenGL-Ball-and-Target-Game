@@ -31,6 +31,7 @@ using namespace glm;
 #include "player.h"
 
 
+
 extern int entityMax;
 GLFWwindow* window ;
 
@@ -91,14 +92,12 @@ int main( void )
 
 	do{
 
-		// Measure speed
 		double currentTime = glfwGetTime();
 		float deltaTime = (float)(currentTime - lastFrameTime); 
 		lastFrameTime = currentTime;
 
-		if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1sec ago
-			// printf and reset
-			//printf("%f ms/frame\n", 1000.0/double(nbFrames));
+		if ( currentTime - lastTime >= 1.0 ){ 
+
 			nbFrames = 0;
 			lastTime += 1.0;
 		}

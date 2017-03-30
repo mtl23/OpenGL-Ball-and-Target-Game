@@ -7,24 +7,15 @@
 
 /**
  * @brief player object that the game use
- * @param position  current position on the map
- * @param accel		current acceleeration
- * @param speed		current speed
- * @param maxaccel  the fastest the car can accerlerate
- * @param minspeed  0
- * @param maxX		player offset --the farthest left the road can go
- * @param minX     player offset --the farthest right the road can go
- * @param playerX where to draw the x coordinate of the road    
- * @param done flag for finishiing a race, remember to set it to 0 again at the strat of the next race
+ * @param int points for recording the player's score
+ * @param Entity for position,salce, rotation, logic and draw functions,meshes etc
+ * @param (*free) here we can assign our own cleanup function if necessary
  */
 
 typedef struct Player_S{
 
 int  points;
 struct Entity_S *Ent;
-	
-
-
 void(*free) (struct Entity *self); /**cleanup function call on free*<*/
 
 					
@@ -32,12 +23,18 @@ void(*free) (struct Entity *self); /**cleanup function call on free*<*/
 
 /**
  * @brief creates player object 
+ * @param path to the mesh file
+ * @param path to the texture file
+ * @param position in worldspace
+ * @param scale in worldspace
+ * @param orientation in worldspace
  * @return a new player object
  */
 Player_S* newPlayer(char* path,char* texture, glm::vec3 position,glm::vec3 scale, glm::quat orientation);
 
 /**
  * @brief frees player object data
+ * @param player ot be freed
  */
 void freePlayer(Entity_S player);
 
