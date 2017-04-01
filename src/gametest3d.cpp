@@ -104,9 +104,12 @@ int main( void )
 	InitEntitySystem(entityMax);
 	initModelSystem();
 
-	Player_S* p2 = newPlayer("aiai.obj","Dirt03.bmp",glm::vec3(-5.00f, 5.0f, 15.0f),glm::vec3(1,1,1),glm::quat (-.14f,0.02f,-0.97f,-0.2f));
-	Player_S* p1 = newPlayer("model.obj","floor_tiles.bmp",glm::vec3(0,0,-15),glm::vec3(3,3,3),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	Player_S* p3 = newPlayer("ballkirby.obj","greenhair.bmp",glm::vec3(0.00f, 7.0f, 20.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
+	Player_S* monkey = newPlayer("aiai.obj","Dirt03.bmp",glm::vec3(-5.00f, 5.0f, 15.0f),glm::vec3(1,1,1),glm::quat (-.14f,0.02f,-0.97f,-0.2f));
+	Player_S* map = newPlayer("model.obj","floor_tiles.bmp",glm::vec3(0,0,-15),glm::vec3(3,3,3),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	Player_S* ball = newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, 7.0f, 20.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
+	Player_S* ring = newPlayer("Ring.obj","blondhair.bmp",glm::vec3(0.00f, 6.0f, -20.0f),glm::vec3(1,1,1),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	Player_S* target = newPlayer("crate.obj","greenhair.bmp",glm::vec3(0.00f, -2.0f, 20.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+
 
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);

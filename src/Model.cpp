@@ -220,7 +220,7 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 
 		// Index buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->elementbuffer);
-		glm::vec3 lightPos = glm::vec3(16,-8,-24);
+		glm::vec3 lightPos = glm::vec3(3,50,5);
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		glm::mat4 RotationMatrix = mat4_cast(model->orientation);
