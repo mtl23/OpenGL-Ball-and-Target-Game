@@ -6,6 +6,7 @@
 #include <glm/gtx/norm.hpp>
 #include <graphics_glfw.h>
 #include <vector>
+#include <iostream>
 #include "objloader.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
@@ -15,6 +16,7 @@ using namespace glm;
 #include "Model.h"
 #include "shader.hpp"
 #include "simple_logger.h"
+#include <lodepng.h>
 
 Model_S *modelList =NULL;
 int modelMax = 10;
@@ -132,7 +134,20 @@ Model_S* newModel( const char * path, const char * texture )
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, modelList[i].indices.size() * sizeof(unsigned short), &modelList[i].indices[0] , GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
-	modelList[i].Texture = loadDDS(texture);
+
+	modelList[i].Texture = loadBMP_custom(texture);
+
+  //std::vector<unsigned char> image; //the raw pixels
+  //unsigned width, height;
+
+  //decode PNG
+  //modelList[i].Texture = lodepng::decode(image, width, height, texture);
+	
+  //if there's an error, display it
+  //if(!modelList[i].Texture) std::cout << "decoder error " << modelList[i].Texture << ": " << lodepng_error_text(modelList[i].Texture) << " "<<texture << std::endl;
+  //else{
+  //std::cout << "decoder error " << modelList[i].Texture << ": " << lodepng_error_text(modelList[i].Texture) << " "<< texture << std::endl;
+  //}
 
 	return &modelList[i];
 }
@@ -148,10 +163,6 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
 	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
 
-	// Load the texture
-	GLuint Texture = loadDDS("uvmap.DDS");
-	//GLuint Texture2 = loadBMP_custom("uvtemplate.bmp");
-
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
 
@@ -160,7 +171,6 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 		glBindTexture(GL_TEXTURE_2D, model->Texture);
 		// Set our "myTextureSampler" sampler to user Texture Unit 0
 		glUniform1i(model->Texture, 0);
-
 		glm::mat4 ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
 			glm::mat4 ViewMatrix = glm::lookAt(
 			glm::vec3( 0, 20, 37 ), // Camera is here
