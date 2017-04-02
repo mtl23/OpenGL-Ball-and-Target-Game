@@ -32,6 +32,8 @@ void(*free) (struct Entity *self); /**cleanup function call on free*<*/
  */
 Player_S* newPlayer(char* path,char* texture, glm::vec3 position,glm::vec3 scale, glm::quat orientation);
 
+int ChangeMap(Player_S* map, int mapnum);
+
 /**
  * @brief frees player object data
  * @param player ot be freed

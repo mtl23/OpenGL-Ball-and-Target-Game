@@ -1,7 +1,8 @@
 #ifndef __MODEL_H__
+
+#define __MODEL_H__
 // Include GLFW
 #include <glfw3.h>
-#define __MODEL_H__
 #include <vector>
 #include <glm/glm.hpp>
 #include "vboindexer.hpp"
@@ -12,6 +13,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/norm.hpp>
+#include "entity.h"
 
 /**
  * @brief Mesh object blueprint form handling any 3D models
