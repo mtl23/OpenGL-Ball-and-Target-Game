@@ -78,7 +78,19 @@ GLFWwindow* window;
 //}
 
 //end Physx init func & param
+	Player_S target1;
+	Player_S target2;
+	Player_S target3;
 
+
+	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+   if(key == GLFW_KEY_ENTER)
+   {
+	   ChangeMap();
+   }
+        
+}
 
 
 int main( void )
@@ -101,19 +113,20 @@ int main( void )
 	}
 	
 	window = InitGraphics();
+
+	glfwSetKeyCallback(window,key_callback);
+
 	InitEntitySystem(entityMax);
 	initModelSystem();
-
-	int mapNum = 1;
 
 	Player_S* monkey = newPlayer("aiai.obj","Dirt03.bmp",glm::vec3(-5.00f, 5.0f, 15.0f),glm::vec3(1,1,1),glm::quat (-.14f,0.02f,-0.97f,-0.2f));
 	Player_S* map = newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,0,-15),glm::vec3(3,3,3),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	Player_S* ball = newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, 7.0f, 20.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
 	Player_S* ring = newPlayer("Ring.obj","blondhair.bmp",glm::vec3(0.00f, 6.0f, -20.0f),glm::vec3(1,1,1),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	
-	Player_S* target1 = newPlayer("crate.obj","greenhair.bmp",glm::vec3(-15.00f, -25.0f, 5.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	Player_S* target2 = newPlayer("crate3.obj","redhair.bmp",glm::vec3(0.00f, -25.0f,-5.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	Player_S* target3 = newPlayer("crate2.obj","blondhair.bmp",glm::vec3(15.00f, -25.0f, 5.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target1 = *newPlayer("crate.obj","greenhair.bmp",glm::vec3(-15.00f, -25.0f, 5.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target2 = *newPlayer("crate2.obj","redhair.bmp",glm::vec3(0.00f, -25.0f,-5.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target3 = *newPlayer("crate3.obj","blondhair.bmp",glm::vec3(15.00f, -25.0f, 5.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	
 // Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -140,23 +153,18 @@ int main( void )
 	
 
 	do{
-		if (glfwGetKey( window,GLFW_KEY_ENTER ) == GLFW_PRESS)
-			{
-				 //mapNum++;
-				ChangeMap(map,mapNum);
-			    slog("changed the map");
-			}
+
 		double currentTime = glfwGetTime();
 		float deltaTime = (float)(currentTime - lastFrameTime); 
 		lastFrameTime = currentTime;
 
 		  if( Mix_PlayingMusic() == 0 )
                     {
-                        //Play the music
-                        if( Mix_PlayMusic( level_music, -1 ) == -1 )
-                        {
-                            return 1;
-                        } 
+                        ////Play the music
+                        //if( Mix_PlayMusic( level_music, -1 ) == -1 )
+                        //{
+                        //    return 1;
+                        //} 
 					}
 
 		if ( currentTime - lastTime >= 1.0 ){ 
@@ -192,3 +200,6 @@ int main( void )
 
 	return 0;
 }
+
+
+
