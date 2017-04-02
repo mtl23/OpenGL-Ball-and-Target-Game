@@ -87,7 +87,7 @@ GLFWwindow* window;
 {
    if(key == GLFW_KEY_ENTER)
    {
-	   ChangeMap();
+	  ChangeMap();
    }
         
 }
@@ -124,9 +124,9 @@ int main( void )
 	Player_S* ball = newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, 7.0f, 20.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
 	Player_S* ring = newPlayer("Ring.obj","blondhair.bmp",glm::vec3(0.00f, 6.0f, -20.0f),glm::vec3(1,1,1),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	
-	target1 = *newPlayer("crate.obj","greenhair.bmp",glm::vec3(-15.00f, -25.0f, 5.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	target2 = *newPlayer("crate2.obj","redhair.bmp",glm::vec3(0.00f, -25.0f,-5.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	target3 = *newPlayer("crate3.obj","blondhair.bmp",glm::vec3(15.00f, -25.0f, 5.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target1 = *newPlayer("crate.obj","greenhair.bmp",glm::vec3(-15.00f, -50.0f, -15.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target2 = *newPlayer("crate2.obj","redhair.bmp",glm::vec3(0.00f, -50.0f,-20.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target3 = *newPlayer("crate3.obj","blondhair.bmp",glm::vec3(15.00f, -50.0f, -25.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	
 // Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
