@@ -140,8 +140,7 @@ int main( void )
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
-
-  
+	
 	
 	// Initialize our little text library with the Holstein font
 	initText2D( "Holstein.DDS" );

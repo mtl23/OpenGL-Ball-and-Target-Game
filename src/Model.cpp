@@ -155,6 +155,9 @@ Model_S* newModel( const char * path, const char * texture )
 
 void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat orientation)
 {
+
+	/// create shader class
+
 		// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
 
@@ -162,9 +165,11 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
 	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
-
+	
 	// Get a handle for our "myTextureSampler" uniform
-	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
+	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler"); 
+
+	////
 
 		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
@@ -179,7 +184,10 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 		);
 
 			// Get a handle for our "LightPosition" uniform
-	glUseProgram(programID);
+	glUseProgram(programID); //extern this
+	glEnable(GL_BLEND); //blend mode mode is set afetr you choose a shader
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  
 	GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
 // 1rst attribute buffer : vertices
@@ -239,7 +247,7 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 			// Draw the triangles !
 			glDrawElements(
 				GL_TRIANGLES,      // mode
-				model->indices.size(),    // count
+				model->indices.size(),// count
 				GL_UNSIGNED_SHORT,   // type
 				(void*)0           // element array buffer offset
 			);
