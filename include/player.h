@@ -43,4 +43,7 @@ void freePlayer(Entity_S player);
 /**
  * @brief Update the player's speed, acceleration, position, and PlayerX based on inputs 
  */
+
+void Pickup(Player_S* p1);
+
 #endif

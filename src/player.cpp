@@ -11,9 +11,9 @@
 extern Player_S target1;
 extern Player_S target2;
 extern Player_S target3;
-
-static int  mapNum = 1;
-
+extern	Player_S ring1;
+extern	Player_S ring2;
+int mapNum;
 Player_S* newPlayer(char* path,char* texture, glm::vec3 position,glm::vec3 scale, glm::quat orientation) 
 {
 	Player_S User;
@@ -30,6 +30,23 @@ Player_S* newPlayer(char* path,char* texture, glm::vec3 position,glm::vec3 scale
 	User.Ent->model->scale = scale;
 
 return &User;
+}
+
+void Pickup(Player_S* p1)
+{
+	
+	p1->points += 100;
+	
+	if(p1->points == 100)
+	{
+		ring1.Ent->model->position.z = 50; 
+	}
+
+	if(p1->points == 200)
+	{
+	ring2.Ent->model->position.z = 50;
+	}
+
 }
 
 void ChangeMap()

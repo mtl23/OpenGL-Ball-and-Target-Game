@@ -10,6 +10,7 @@
 #include "objloader.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
+#include <controls.hpp>
 using namespace glm;
 
 #include "quaternion_utils.hpp"
@@ -165,28 +166,31 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
 	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
-	
+		computeMatricesFromInputs();
+		glm::mat4 ProjectionMatrix = getProjectionMatrix();
+		glm::mat4 ViewMatrix = getViewMatrix();
+		//glm::mat4 ModelMatrix = glm::mat4(1.0);
+	//	glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler"); 
 
-	////
 
 		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, model->Texture);
 		// Set our "myTextureSampler" sampler to user Texture Unit 0
 		glUniform1i(model->Texture, 0);
-		glm::mat4 ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-			glm::mat4 ViewMatrix = glm::lookAt(
-			glm::vec3( 0, 20, 37 ), // Camera is here
-			glm::vec3( 0, 0, 0 ), // and looks here
-			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
-		);
+//		glm::mat4 ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+		//	glm::mat4 ViewMatrix = glm::lookAt(
+		//	glm::vec3( 0, 20, 37 ), // Camera is here
+		//	glm::vec3( 0, 0, 0 ), // and looks here
+		//	glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+		//);
 
 			// Get a handle for our "LightPosition" uniform
 	glUseProgram(programID); //extern this
-	glEnable(GL_BLEND); //blend mode mode is set afetr you choose a shader
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//	glEnable(GL_BLEND); //blend mode mode is set afetr you choose a shader
+//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
 	GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 

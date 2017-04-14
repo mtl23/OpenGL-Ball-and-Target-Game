@@ -12,7 +12,7 @@ extern GLFWwindow* window ;
 
 static Entity_S *entityList = NULL;
 int numEntity = 0;
-int entityMax = 10;
+int entityMax = 25;
 
 void InitEntitySystem(int EntityMax)
 {

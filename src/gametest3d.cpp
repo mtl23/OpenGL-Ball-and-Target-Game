@@ -5,10 +5,11 @@
 #include<iostream>
 
 // Include GLEW
-#include <GL/glew.h>
+#include <glew.h>
 
 // Include GLFW
 #include <glfw3.h>
+//#include "btBulletDynamicsCommon.h"
 
 // Include GLM
 #include <glm/glm.hpp>
@@ -19,20 +20,7 @@
 #include <glm/gtx/norm.hpp>
 #include <lodepng.h>
 
-//#include <PxPhysics.h>
-//#include <PxScene.h>
-//#include <PxRigidDynamic.h>
-//#include <PxShape.h>
-//#include <PxPhysicsAPI.h>
-//#include <pxphysicsapi.h>
-//#include <pxdefaulterrorcallback.h>
-//#include <pxdefaultallocator.h>
-//#include <PxTolerancesScale.h>
-//#include <common/PxPhysXCommonConfig.h>
-//#include <vehicle/PxVehicleSDK.h>
-
 using namespace glm;
-//using namespace physx;
 
 #include "shader.hpp"
 #include "texture.hpp"
@@ -47,56 +35,57 @@ using namespace glm;
 #include "SDL_mixer.h"
 
 
-extern int entityMax;
-
-GLFWwindow* window;
-
-//// Init Phy sx functions and parameters
-//static class PxPhysics* gPhysicsSDK = NULL;
-//static class PxDefaultErrorCallback gDefaultErrorCallback;
-//static class PxDefaultAllocator gDefaultAllocatorCallback;
-//
-//void InitializePhysX() {
-//	PxFoundation *mFoundation = NULL;
-//
-//	printf("creating Foundation\n");
-// // create foundation object with default error and allocator callbacks.
-// mFoundation = PxCreateFoundation(
-// PX_PHYSICS_VERSION,
-// gDefaultAllocatorCallback,
-// gDefaultErrorCallback);
-//
-//   gPhysicsSDK = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation,  PxTolerancesScale() );
-//   if(gPhysicsSDK == NULL) {
-// slog("Error creating PhysX device.");
-// slog("Exiting...");
-// exit(1);
-//   }
-//}
-//void ShutdownPhysX() {
-//   gPhysicsSDK->release();
-//}
-
-//end Physx init func & param
+	extern int entityMax;
+	GLFWwindow* window;
+		
+	Player_S ring1;
+	Player_S ring2;
+	
 	Player_S target1;
 	Player_S target2;
 	Player_S target3;
 
+	Player_S map;
+	Player_S ball;
+	Player_S monkey;
+
+	int points = 0;
+	int mapnum = 1;
 
 	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-   if(key == GLFW_KEY_ENTER)
-   {
-	  ChangeMap();
-   }
+	   if(key == GLFW_KEY_ENTER  )
+	   {
+			if( action ==GLFW_RELEASE)
+				{
+		
+					ChangeMap();
+				mapnum += 1;
+				if(mapnum>3)
+					  {
+					  mapnum = 1;
+					  }
+				}
+	   }
+
+	   if(key == GLFW_KEY_SPACE)
+	   {
+			if( action ==GLFW_RELEASE)
+				{
+			   Pickup(&monkey);
+				}
+	   }
         
 }
 
 
 int main( void )
 {
-//Initialize SDL_mixer
-                if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+
+//	Initialize SDL_mixer
+
+
+    if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
                 {
                     printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
                    
@@ -119,16 +108,18 @@ int main( void )
 	InitEntitySystem(entityMax);
 	initModelSystem();
 
-	Player_S* monkey = newPlayer("aiai.obj","Dirt03.bmp",glm::vec3(-5.00f, 5.0f, 15.0f),glm::vec3(1,1,1),glm::quat (-.14f,0.02f,-0.97f,-0.2f));
-	Player_S* map = newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,0,-15),glm::vec3(3,3,3),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	Player_S* ball = newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, 7.0f, 20.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
-	Player_S* ring = newPlayer("Ring.obj","blondhair.bmp",glm::vec3(0.00f, 6.0f, -20.0f),glm::vec3(1,1,1),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	
+	monkey = *newPlayer("aiai.obj","Dirt03.bmp",glm::vec3(-5.00f, 5.0f, 15.0f),glm::vec3(1,1,1),glm::quat (-.14f,0.02f,-0.97f,-0.2f));
+	map  =	 *newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,0,-15),glm::vec3(3,3,3),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	ball =   *newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, 7.0f, 20.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
+	 
+	ring1 =  *newPlayer("Ring.obj","redhair.bmp",glm::vec3(5.00f, 7.0f, -20.0f),glm::vec3(.71,.71,.71),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	ring2 =  *newPlayer("Ring2.obj","blondhair.bmp",glm::vec3(-5.00f, 7.0f, -20.0f),glm::vec3(.71,.71,.71),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+
 	target1 = *newPlayer("crate.obj","greenhair.bmp",glm::vec3(-15.00f, -50.0f, -15.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	target2 = *newPlayer("crate2.obj","redhair.bmp",glm::vec3(0.00f, -50.0f,-20.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	target3 = *newPlayer("crate3.obj","blondhair.bmp",glm::vec3(15.00f, -50.0f, -25.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	
-// Ensure we can capture the escape key being pressed below
+	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     // Hide the mouse and enable unlimited mouvement
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -150,7 +141,6 @@ int main( void )
 	double lastFrameTime = lastTime;
 	int nbFrames = 0;
 	
-
 	do{
 
 		double currentTime = glfwGetTime();
@@ -176,10 +166,15 @@ int main( void )
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		entityDrawAll();
+		
+		char text1[256];
+		char text2[256];
+	
+		sprintf(text1,"Level: %i", mapnum );
+		sprintf(text2,"%i", monkey.points);
 
-		char text[256];
-		sprintf(text,"%.2f sec", glfwGetTime() );
-		printText2D(text, 10, 500, 60);
+		printText2D(text1, 500, 500, 30);
+		printText2D(text2, 600, 1040, 30);
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -188,17 +183,12 @@ int main( void )
 	} // Check if the ESC key was pressed or the window was closed
 	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
 		   glfwWindowShouldClose(window) == 0 );
-
 	
-	
-	glDeleteVertexArrays(1, &VertexArrayID);
-	CloseEntitySystem();
-	closeModelSystem();
-	cleanupText2D();
-	glfwTerminate();
+			glDeleteVertexArrays(1, &VertexArrayID);
+			CloseEntitySystem();
+			closeModelSystem();
+			cleanupText2D();
+			glfwTerminate();
 
 	return 0;
 }
-
-
-

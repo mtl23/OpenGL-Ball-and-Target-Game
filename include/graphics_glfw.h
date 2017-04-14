@@ -3,7 +3,7 @@
 
 #include <vector>
 // Include GLEW
-#include <GL/glew.h>
+#include <glew.h>
 // Include GLFW
 #include <glfw3.h>
 #include <AntTweakBar.h>
