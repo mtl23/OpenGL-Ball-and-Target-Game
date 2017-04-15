@@ -8,9 +8,14 @@ extern GLFWwindow* window; // The "extern" keyword here is to access the variabl
 using namespace glm;
 
 #include "controls.hpp"
+#include "simple_logger.h";
+#include "player.h"
+
+extern Player_S ball;
 
 glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
+
 
 glm::mat4 getViewMatrix(){
 	return ViewMatrix;
@@ -21,11 +26,11 @@ glm::mat4 getProjectionMatrix(){
 
 
 // Initial position : on +Z
-glm::vec3 position = glm::vec3( 0, 0, 5 ); 
+glm::vec3 position = glm::vec3( 0.00f, 8.5f, 25.0f ); 
 // Initial horizontal angle : toward -Z
 float horizontalAngle = 3.14f;
 // Initial vertical angle : none
-float verticalAngle = 0.0f;
+float verticalAngle = -0.270f;
 // Initial Field of View
 float initialFoV = 45.0f;
 
@@ -50,8 +55,9 @@ void computeMatricesFromInputs(){
 	 glfwSetCursorPos(window, 1024/2, 768/2);
 
 	// Compute new orientation
-	horizontalAngle += mouseSpeed * float(1024/2 - xpos );
-	verticalAngle   += mouseSpeed * float( 768/2 - ypos );
+	//horizontalAngle += mouseSpeed * float(1024/2 - xpos );
+	//verticalAngle   += mouseSpeed * float( 768/2 - ypos );
+	//slog("%f", verticalAngle);
 
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
 	glm::vec3 direction(
