@@ -26,7 +26,7 @@ glm::mat4 getProjectionMatrix(){
 
 
 // Initial position : on +Z
-glm::vec3 position = glm::vec3( 0.00f, 8.5f, 25.0f ); 
+glm::vec3 position = glm::vec3( 0.00f, 8.5f, 25.0f ); // should y be 2??
 // Initial horizontal angle : toward -Z
 float horizontalAngle = 3.14f;
 // Initial vertical angle : none
@@ -81,16 +81,16 @@ void computeMatricesFromInputs(){
 		position += direction * deltaTime * speed;
 	}
 	// Move backward
-	if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
-		position -= direction * deltaTime * speed;
-	}
+	//if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
+	//	position -= direction * deltaTime * speed;
+	//}
 	// Strafe right
 	if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS){
-		position += right * deltaTime * speed;
+		horizontalAngle -=  deltaTime * speed;
 	}
 	// Strafe left
 	if (glfwGetKey( window, GLFW_KEY_LEFT ) == GLFW_PRESS){
-		position -= right * deltaTime * speed;
+		horizontalAngle +=  deltaTime * speed;
 	}
 
 	float FoV = initialFoV;
@@ -104,6 +104,13 @@ void computeMatricesFromInputs(){
 								up                  // Head is up (set to 0,-1,0 to look upside-down)
 						   );
 
+	if(position.y <=2){
+		position.y =2;
+	}
+	
 	// For the next frame, the "last time" will be "now"
 	lastTime = currentTime;
+
+
+
 }
