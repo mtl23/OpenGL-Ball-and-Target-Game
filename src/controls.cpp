@@ -11,7 +11,7 @@ using namespace glm;
 #include "simple_logger.h";
 #include "player.h"
 
-extern Player_S ball;
+extern Player_S monkey;
 
 glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
@@ -37,10 +37,12 @@ float initialFoV = 45.0f;
 float speed = 3.0f; // 3 units / second
 float mouseSpeed = 0.005f;
 
-
+int maxHieght = 4;
 
 void computeMatricesFromInputs(){
-
+	monkey.Ent->model->position = position;
+	monkey.Ent->model->position.y -= 5;
+	monkey.Ent->model->position.z -= 8;
 	// glfwGetTime is called only once, the first time this function is called
 	static double lastTime = glfwGetTime();
 
@@ -84,7 +86,7 @@ void computeMatricesFromInputs(){
 	//if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
 	//	position -= direction * deltaTime * speed;
 	//}
-	// Strafe right
+	// Rotate right
 	if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS){
 		horizontalAngle -=  deltaTime * speed;
 	}
@@ -104,8 +106,9 @@ void computeMatricesFromInputs(){
 								up                  // Head is up (set to 0,-1,0 to look upside-down)
 						   );
 
-	if(position.y <=2){
-		position.y =2;
+	if(position.y <= maxHieght )
+	{
+		position.y = maxHieght;
 	}
 	
 	// For the next frame, the "last time" will be "now"

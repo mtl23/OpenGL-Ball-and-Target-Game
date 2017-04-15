@@ -46,7 +46,7 @@ using namespace glm;
 	Player_S target3;
 
 	Player_S map;
-	Player_S ball;
+	//Player_S ball;
 	Player_S monkey;
 
 	int points = 0;
