@@ -20,7 +20,13 @@ struct	Model_S* model;
 	glm::vec3 minaccel;		
 	glm::vec3 minspeed;        
 	glm::vec3 maxspeed;        
-	
+	float maxX;
+	float minX;
+	float maxY;
+	float minY;
+	float maxZ;
+	float minZ;
+
 	int next_think;/**time index for next_think<*/
 	int think_rate; /**how often to run think*/
 	void(*draw) (Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat orientation); /**logic*<*/

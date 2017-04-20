@@ -9,9 +9,10 @@
 
 // Include GLFW
 #include <glfw3.h>
-//#include "btBulletDynamicsCommon.h"
-
+//#include <btBulletDynamicsCommon.h>
+//#include <btBulletCollisionCommon.h>
 // Include GLM
+#include <SDL_mixer.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -32,7 +33,8 @@ using namespace glm;
 #include "graphics_glfw.h"
 #include "player.h"
 #include "simple_logger.h"
-#include "SDL_mixer.h"
+
+#include "Physics.h"
 
 
 	extern int entityMax;
@@ -82,13 +84,32 @@ using namespace glm;
 int main( void )
 {
 
+
+	///-----initialization_start-----
+
+	///collision configuration contains default setup for memory, collision setup. Advanced users can create their own configuration.
+	//btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
+
+	//use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
+	//btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
+
+	//btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
+	//btBroadphaseInterface* overlappingPairCache = new btDbvtBroadphase();
+
+	//the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
+	//btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
+
+	//btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+
+	//dynamicsWorld->setGravity(btVector3(0, -10, 0));
+
+	///-----initialization_end-----
+
+
 //	Initialize SDL_mixer
-
-
     if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
                 {
-                    printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
-                   
+                   printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );  
                 }
 
   Mix_Music *level_music;
@@ -107,6 +128,8 @@ int main( void )
 
 	InitEntitySystem(entityMax);
 	initModelSystem();
+
+
 
 	monkey = *newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, -0.5f, 14.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
 	map  =	 *newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,0,-15),glm::vec3(3,3,3),glm::quat (0.71f,0.00f,-0.71f,0.00f));
@@ -140,7 +163,8 @@ int main( void )
 	double lastTime = glfwGetTime();
 	double lastFrameTime = lastTime;
 	int nbFrames = 0;
-	
+	Space_S* space = newSpace();
+
 	do{
 
 		double currentTime = glfwGetTime();

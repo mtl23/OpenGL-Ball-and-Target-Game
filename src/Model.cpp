@@ -113,6 +113,7 @@ Model_S* newModel( const char * path, const char * texture )
 	bool res = loadOBJ(path, modelList[i].vertices, modelList[i].uvs, modelList[i].normals);
 	indexVBO(modelList[i].vertices, modelList[i].uvs, modelList[i].normals, modelList[i].indices, modelList[i].indexed_vertices, modelList[i].indexed_uvs, modelList[i].indexed_normals);
 
+
 	// Load it into a VBO
 	glGenBuffers(1, &modelList[i].vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, modelList[i].vertexbuffer);
@@ -136,6 +137,7 @@ Model_S* newModel( const char * path, const char * texture )
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
 
+	
 	modelList[i].Texture = loadBMP_custom(texture);
 
   //std::vector<unsigned char> image; //the raw pixels

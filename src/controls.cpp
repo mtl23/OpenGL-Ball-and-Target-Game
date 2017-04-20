@@ -26,7 +26,7 @@ glm::mat4 getProjectionMatrix(){
 
 
 // Initial position : on +Z
-glm::vec3 position = glm::vec3( 0.00f, 8.5f, 25.0f ); // should y be 2??
+glm::vec3 position = glm::vec3( 0.00f, 4.04f, 18.0f ); // should y be 2??
 // Initial horizontal angle : toward -Z
 float horizontalAngle = 3.14f;
 // Initial vertical angle : none
@@ -88,11 +88,11 @@ void computeMatricesFromInputs(){
 	//}
 	// Rotate right
 	if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS){
-		horizontalAngle -=  deltaTime * speed;
+		position += right * deltaTime * speed;
 	}
 	// Strafe left
 	if (glfwGetKey( window, GLFW_KEY_LEFT ) == GLFW_PRESS){
-		horizontalAngle +=  deltaTime * speed;
+		position -= right * deltaTime * speed;
 	}
 
 	float FoV = initialFoV;
