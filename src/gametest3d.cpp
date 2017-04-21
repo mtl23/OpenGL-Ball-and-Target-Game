@@ -3,14 +3,15 @@
 #include <stdlib.h>
 #include <vector>
 #include<iostream>
-
+//#include<btBulletCollisionCommon.h>
+//#include<btBulletDynamicsCommon.h>
 // Include GLEW
 #include <glew.h>
 
 // Include GLFW
 #include <glfw3.h>
-//#include <btBulletDynamicsCommon.h>
-//#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+#include <btBulletCollisionCommon.h>
 // Include GLM
 #include <SDL_mixer.h>
 #include <glm/glm.hpp>
@@ -83,28 +84,30 @@ using namespace glm;
 
 int main( void )
 {
+	FILE * f;
 
 
-	///-----initialization_start-----
+	f=fopen("canary","w");
 
-	///collision configuration contains default setup for memory, collision setup. Advanced users can create their own configuration.
-	//btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
 
-	//use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
-	//btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	fprintf(f,"Heres the canary");
 
-	//btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
-	//btBroadphaseInterface* overlappingPairCache = new btDbvtBroadphase();
+	fclose(f);
 
-	//the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
-	//btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
+	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
 
-	//btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
+	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
 
-	//dynamicsWorld->setGravity(btVector3(0, -10, 0));
+	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
+	btBroadphaseInterface* overlappingPairCache = new btDbvtBroadphase();
 
-	///-----initialization_end-----
+	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
+	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
 
+	btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+
+	dynamicsWorld->setGravity(btVector3(0, -10, 0));
 
 //	Initialize SDL_mixer
     if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )

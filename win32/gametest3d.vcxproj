@@ -53,6 +53,17 @@
     <None Include="shaders\TransformVertexShader.vertexshader" />
     <None Include="shaders\vs1.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Downloads\bullet3-master\build\src\BulletCollision\BulletCollision.vcxproj">
+      <Project>{0231c374-f85d-3872-83d5-7c8f6d1a96bb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Downloads\bullet3-master\build\src\BulletDynamics\BulletDynamics.vcxproj">
+      <Project>{038fe7f9-211a-3632-8e87-52eae8742ff9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Downloads\bullet3-master\build\src\LinearMath\LinearMath.vcxproj">
+      <Project>{5640d9f9-ae15-31eb-970b-982c18378325}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C8351047-707B-4D68-A801-6749E9509337}</ProjectGuid>
     <RootNamespace>gametest3d</RootNamespace>
@@ -83,7 +94,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\mtl23\Desktop\IT485\gametest3d-master\include;C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\include;C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;C:\Libraries\glew-1.12.0\include;C:\Libraries\SDL2-2.0.3\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\mtl23\Downloads\bullet3-master\src;C:\Users\mtl23\Downloads\bullet3-master\src;C:\Users\mtl23\Desktop\IT485\gametest3d-master\include;C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\include;C:\Users\mtl23\Desktop\IT485\glm;C:\Users\mtl23\Desktop\IT485\include;C:\Libraries\glew-1.12.0\include;C:\Libraries\SDL2-2.0.3\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\mtl23\Desktop\IT485\glfw-3.2.1.bin.WIN32\lib-vc2015;C:\Users\mtl23\Desktop\IT485\glew-2.0.0\lib\Release\Win32;C:\Users\mtl23\Desktop\IT485\lib;C:\Libraries\glew-1.12.0\lib\Release\Win32;C:\Libraries\SDL2-2.0.3\lib\x86;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\..</OutDir>
     <IntDir>$(ProjectDir)\..</IntDir>
@@ -98,7 +109,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
