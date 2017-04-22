@@ -161,7 +161,8 @@ int main( void )
 	Space_S* space = newSpace();
 
 	do{
-
+		programID = LoadShaders("shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader");
+		glUseProgram(programID);
 		double currentTime = glfwGetTime();
 		float deltaTime = (float)(currentTime - lastFrameTime); 
 		lastFrameTime = currentTime;

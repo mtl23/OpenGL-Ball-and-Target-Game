@@ -162,8 +162,7 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 	/// create shader class
 
 		// Create and compile our GLSL program from the shaders
-	programID = LoadShaders( "shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader" );
-
+	
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
@@ -189,7 +188,7 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 		//);
 
 			// Get a handle for our "LightPosition" uniform
-	glUseProgram(programID); //extern this
+/*	glUseProgram(programID);*/ //not here
 //	glEnable(GL_BLEND); //blend mode mode is set afetr you choose a shader
 //	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
