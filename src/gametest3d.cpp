@@ -40,7 +40,7 @@ using namespace glm;
 
 	extern int entityMax;
 	GLFWwindow* window;
-		
+	GLuint programID;
 	Player_S ring1;
 	Player_S ring2;
 	
@@ -84,15 +84,7 @@ using namespace glm;
 
 int main( void )
 {
-	FILE * f;
 
-
-	f=fopen("canary","w");
-
-
-	fprintf(f,"Heres the canary");
-
-	fclose(f);
 
 	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
 
@@ -126,7 +118,7 @@ int main( void )
 	}
 	
 	window = InitGraphics();
-
+	
 	glfwSetKeyCallback(window,key_callback);
 
 	InitEntitySystem(entityMax);
@@ -192,6 +184,7 @@ int main( void )
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		computeMatricesFromInputs();
 		entityDrawAll();
 		
 		char text1[256];

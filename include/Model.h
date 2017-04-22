@@ -60,6 +60,8 @@ typedef struct Model_S
 
 }Model_S;
 
+extern GLuint programID;
+
 void initModelSystem();
 void closeModelSystem();
 Model_S* newModel( const char * path, const char * texture );
