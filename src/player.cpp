@@ -62,21 +62,21 @@ void ChangeMap()
 
 		 {
 		 case (1):
-		target1.Ent->model->position = glm::vec3(-15.00f, -20.0f, 5.0f);
-		target2.Ent->model->position = glm::vec3(0.00f, -20.0f,-5.0f);
-		target3.Ent->model->position = glm::vec3(15.00f, -20.0f, 5.0f);
+		target1.Ent->model->position = glm::vec3(-15.00f, -20.0f, -55.0f);
+		target2.Ent->model->position = glm::vec3(0.00f, -20.0f,-55.0f);
+		target3.Ent->model->position = glm::vec3(15.00f, -20.0f, -55.0f);
 		break;
 	 
 		 case (2):
-		target1.Ent->model->position = glm::vec3(00.00f, -50.0f, -9.0f);
-        target2.Ent->model->position = glm::vec3(0.00f, -50.0f,-20.0f);
-        target3.Ent->model->position = glm::vec3(0.00f, -50.0f, -32.0f);
+		target1.Ent->model->position = glm::vec3(0.00f, -50.0f, -45.0f);
+        target2.Ent->model->position = glm::vec3(0.00f, -50.0f,-56.0f);
+        target3.Ent->model->position = glm::vec3(0.00f, -50.0f, -78.0f);
 		break;
 
 		 case (3):
-		target1.Ent->model->position = glm::vec3(-15.00f, -50.0f, -15.0f);
-		target2.Ent->model->position = glm::vec3(0.00f, -50.0f,-20.0f);
-		target3.Ent->model->position = glm::vec3(15.00f, -50.0f, -25.0f);
+		target1.Ent->model->position = glm::vec3(-15.00f, -50.0f, -55.0f);
+		target2.Ent->model->position = glm::vec3(0.00f, -50.0f,-70.0f);
+		target3.Ent->model->position = glm::vec3(15.00f, -50.0f, -55.0f);
 		 break;
 		 }
 	 return;

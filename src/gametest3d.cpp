@@ -43,7 +43,7 @@ using namespace glm;
 	GLuint programID;
 	Player_S ring1;
 	Player_S ring2;
-	
+	btDiscreteDynamicsWorld* dynamicsWorld;
 	Player_S target1;
 	Player_S target2;
 	Player_S target3;
@@ -54,6 +54,34 @@ using namespace glm;
 
 	int points = 0;
 	int mapnum = 1;
+
+
+
+	class BulletDebugDrawer_DeprecatedOpenGL : public btIDebugDraw {
+	public:
+		void SetMatrices(glm::mat4 pViewMatrix, glm::mat4 pProjectionMatrix) {
+			glUseProgram(0); // Use Fixed-function pipeline (no shaders)
+			glMatrixMode(GL_MODELVIEW);
+			glLoadMatrixf(&pViewMatrix[0][0]);
+			glMatrixMode(GL_PROJECTION);
+			glLoadMatrixf(&pProjectionMatrix[0][0]);
+		}
+		virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) {
+			glColor3f(color.x(), color.y(), color.z());
+			glBegin(GL_LINES);
+			glVertex3f(from.x(), from.y(), from.z());
+			glVertex3f(to.x(), to.y(), to.z());
+			glEnd();
+		}
+		virtual void drawContactPoint(const btVector3 &, const btVector3 &, btScalar, int, const btVector3 &) {}
+		virtual void reportErrorWarning(const char *) {}
+		virtual void draw3dText(const btVector3 &, const char *) {}
+		virtual void setDebugMode(int p) {
+			m = p;
+		}
+		int getDebugMode(void) const { return 3; }
+		int m;
+	};
 
 	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -85,22 +113,6 @@ using namespace glm;
 int main( void )
 {
 
-
-	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
-
-	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
-	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
-
-	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
-	btBroadphaseInterface* overlappingPairCache = new btDbvtBroadphase();
-
-	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
-	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
-
-	btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-
-	dynamicsWorld->setGravity(btVector3(0, -10, 0));
-
 //	Initialize SDL_mixer
     if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
                 {
@@ -124,7 +136,62 @@ int main( void )
 	InitEntitySystem(entityMax);
 	initModelSystem();
 
+	//Generate positions & rotations for 100 monkeys
+	std::vector<glm::vec3> positions(2);
+	std::vector<glm::quat> orientations(2);
+	for (int i = 0; i<2; i++) {
+		positions[i] = glm::vec3(rand() % 20 - 10, rand() % 20 - 10, rand() % 20 - 10);
+		orientations[i] = glm::normalize(glm::quat(glm::vec3(rand() % 360, rand() % 360, rand() % 360)));
 
+	}
+	//Build the broadphase
+	btBroadphaseInterface* broadphase = new btDbvtBroadphase();
+
+	//Set up the collision configuration and dispatcher
+	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
+	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
+
+	//The actual physics solver
+	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
+
+	//The world.
+	btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+	dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
+
+
+	BulletDebugDrawer_DeprecatedOpenGL mydebugdrawer;
+	dynamicsWorld->setDebugDrawer(&mydebugdrawer);
+
+	std::vector<btRigidBody*> rigidbodies;
+
+	// In this example, all monkeys will use the same collision shape : 
+	// A box of 2m*2m*2m (1.0 is the half-extent !)
+	btCollisionShape* boxCollisionShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
+
+	for (int i = 0; i < 2; i++) {
+
+		btDefaultMotionState* motionstate = new btDefaultMotionState(btTransform(
+			btQuaternion(orientations[i].x, orientations[i].y, orientations[i].z, orientations[i].w),
+			btVector3(positions[i].x, positions[i].y, positions[i].z)
+		));
+
+		btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
+			.05,                  // mass, in kg. 0 -> Static object, will never move.
+			motionstate,
+			boxCollisionShape,  // collision shape of body
+			btVector3(0, 0, 0)    // local inertia
+		);
+		btRigidBody *rigidBody = new btRigidBody(rigidBodyCI);
+
+		rigidbodies.push_back(rigidBody);
+		dynamicsWorld->addRigidBody(rigidBody);
+
+		// Small hack : store the mesh's index "i" in Bullet's User Pointer.
+		//Will be used to know which object is picked. 
+		//A real program would probably pass a "MyGameObjectPointer" instead.
+		rigidBody->setUserPointer((void*)0);
+
+	}
 
 	monkey = *newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, -0.5f, 14.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
 	map  =	 *newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,0,-15),glm::vec3(3,3,3),glm::quat (0.71f,0.00f,-0.71f,0.00f));
@@ -133,9 +200,9 @@ int main( void )
 	ring1 =  *newPlayer("Ring.obj","blondhair.bmp",glm::vec3(5.00f, 2.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	ring2 =  *newPlayer("Ring2.obj","blondhair.bmp",glm::vec3(-5.00f, 2.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 
-	target1 = *newPlayer("crate.obj","greenhair.bmp",glm::vec3(-15.00f, -50.0f, -15.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	target2 = *newPlayer("crate2.obj","redhair.bmp",glm::vec3(0.00f, -50.0f,-20.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	target3 = *newPlayer("crate3.obj","blondhair.bmp",glm::vec3(15.00f, -50.0f, -25.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target1 = *newPlayer("crate.obj","greenhair.bmp",glm::vec3(-15.00f, -50.0f, -45.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target2 = *newPlayer("crate2.obj","redhair.bmp",glm::vec3(0.00f, -50.0f,-60.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target3 = *newPlayer("crate3.obj","blondhair.bmp",glm::vec3(15.00f, -50.0f, -65.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -158,9 +225,9 @@ int main( void )
 	double lastTime = glfwGetTime();
 	double lastFrameTime = lastTime;
 	int nbFrames = 0;
-	Space_S* space = newSpace();
 
 	do{
+	
 		programID = LoadShaders("shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader");
 		glUseProgram(programID);
 		double currentTime = glfwGetTime();
@@ -184,7 +251,7 @@ int main( void )
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		dynamicsWorld->stepSimulation(deltaTime, 1);
 		computeMatricesFromInputs();
 		entityDrawAll();
 		
@@ -196,6 +263,11 @@ int main( void )
 
 		printText2D(text1, 500, 500, 30);
 		printText2D(text2, 600, 1040, 30);
+
+		glm::mat4 ProjectionMatrix = getProjectionMatrix();
+		glm::mat4 ViewMatrix = getViewMatrix();
+		mydebugdrawer.SetMatrices(ViewMatrix, ProjectionMatrix);
+		dynamicsWorld->debugDrawWorld();
 
 		// Swap buffers
 		glfwSwapBuffers(window);

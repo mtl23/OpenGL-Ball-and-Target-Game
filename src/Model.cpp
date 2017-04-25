@@ -22,6 +22,33 @@ using namespace glm;
 Model_S *modelList =NULL;
 int modelMax = 10;
 int numModels = 0;
+extern btDiscreteDynamicsWorld* dynamicsWorld;
+
+class BulletDebugDrawer_DeprecatedOpenGL : public btIDebugDraw {
+public:
+	void SetMatrices(glm::mat4 pViewMatrix, glm::mat4 pProjectionMatrix) {
+		glUseProgram(0); // Use Fixed-function pipeline (no shaders)
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(&pViewMatrix[0][0]);
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(&pProjectionMatrix[0][0]);
+	}
+	virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) {
+		glColor3f(color.x(), color.y(), color.z());
+		glBegin(GL_LINES);
+		glVertex3f(from.x(), from.y(), from.z());
+		glVertex3f(to.x(), to.y(), to.z());
+		glEnd();
+	}
+	virtual void drawContactPoint(const btVector3 &, const btVector3 &, btScalar, int, const btVector3 &) {}
+	virtual void reportErrorWarning(const char *) {}
+	virtual void draw3dText(const btVector3 &, const char *) {}
+	virtual void setDebugMode(int p) {
+		m = p;
+	}
+	int getDebugMode(void) const { return 3; }
+	int m;
+};
 
 
 void initModelSystem()
@@ -34,6 +61,8 @@ void initModelSystem()
 	}
 memset(modelList, 0, sizeof(Model_S)*(modelMax));
 slog("model system is go");
+
+
 }
 
 void freeModel (Model_S *model)
@@ -140,29 +169,12 @@ Model_S* newModel( const char * path, const char * texture )
 	
 	modelList[i].Texture = loadBMP_custom(texture);
 
-  //std::vector<unsigned char> image; //the raw pixels
-  //unsigned width, height;
-
-  //decode PNG
-  //modelList[i].Texture = lodepng::decode(image, width, height, texture);
-	
-  //if there's an error, display it
-  //if(!modelList[i].Texture) std::cout << "decoder error " << modelList[i].Texture << ": " << lodepng_error_text(modelList[i].Texture) << " "<<texture << std::endl;
-  //else{
-  //std::cout << "decoder error " << modelList[i].Texture << ": " << lodepng_error_text(modelList[i].Texture) << " "<< texture << std::endl;
-  //}
-
 	return &modelList[i];
 }
 
 
 void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat orientation)
 {
-
-	/// create shader class
-
-		// Create and compile our GLSL program from the shaders
-	
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
@@ -193,6 +205,8 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 //	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
 	GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+	glm::vec3 lightPos = glm::vec3(3,55, 5);
+	glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 // 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
@@ -232,8 +246,6 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 
 		// Index buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->elementbuffer);
-		glm::vec3 lightPos = glm::vec3(3,50,5);
-		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		glm::mat4 RotationMatrix = mat4_cast(model->orientation);
 		glm::mat4 TranslationMatrix = translate(mat4(), model->position); // places into position

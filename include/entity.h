@@ -2,7 +2,8 @@
 #define __ENTITY_H__
 
 #include <glfw3.h>
-
+#include <btBulletDynamicsCommon.h>
+#include <btBulletCollisionCommon.h>
 #include <glm/glm.hpp>
 /**
 *@brief The data  structure for Entities 
@@ -26,6 +27,8 @@ struct	Model_S* model;
 	float minY;
 	float maxZ;
 	float minZ;
+
+	btCollisionShape* boxCollisionShape;
 
 	int next_think;/**time index for next_think<*/
 	int think_rate; /**how often to run think*/

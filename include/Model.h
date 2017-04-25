@@ -57,7 +57,6 @@ typedef struct Model_S
 	glm::vec3 scale;
 	glm::quat orientation;
 
-
 }Model_S;
 
 extern GLuint programID;
