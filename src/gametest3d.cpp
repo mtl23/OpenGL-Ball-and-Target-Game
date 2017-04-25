@@ -54,6 +54,7 @@ using namespace glm;
 
 	int points = 0;
 	int mapnum = 1;
+	int touch = 0;
 
 
 
@@ -99,14 +100,14 @@ using namespace glm;
 				}
 	   }
 
-	   if(key == GLFW_KEY_SPACE)
+	   if (key == GLFW_KEY_SPACE)
 	   {
-			if( action ==GLFW_RELEASE)
-				{
+		   if (action == GLFW_RELEASE)
+		   {
 			   Pickup(&monkey);
-				}
+		   }
 	   }
-        
+	    
 }
 
 
@@ -183,7 +184,7 @@ int main( void )
 	dynamicsWorld->setDebugDrawer(&mydebugdrawer);
 
 	std::vector<btRigidBody*> rigidbodies;
-
+	glm::vec3 v0;
 	// In this example, all monkeys will use the same collision shape : 
 	// A box of 2m*2m*2m (1.0 is the half-extent !)
 	btCollisionShape* boxCollisionShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
@@ -352,6 +353,16 @@ int main( void )
 
 	do{
 	
+		btVector3 p0 = rigidbodies[0]->getCenterOfMassPosition();
+		btQuaternion O0 = rigidbodies[0]->getOrientation();
+		monkey.Ent->model->orientation.w = O0.w();
+		monkey.Ent->model->orientation.x = O0.x();
+		monkey.Ent->model->orientation.y = O0.y();
+		monkey.Ent->model->orientation.z = O0.z();
+		monkey.Ent->model->position.x = p0.x();
+		monkey.Ent->model->position.y = (p0.y()-2);
+		monkey.Ent->model->position.z = p0.z();
+		printf("p0 : %f %f %f, monkey : %f %f %f\n", p0.x(), p0.y(), p0.z(), monkey.Ent->model->position.x, monkey.Ent->model->position.y, monkey.Ent->model->position.z);
 		programID = LoadShaders("shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader");
 		glUseProgram(programID);
 		double currentTime = glfwGetTime();
@@ -387,6 +398,14 @@ int main( void )
 		sprintf(text1,"Level: %i", mapnum );
 		sprintf(text2,"%i", monkey.points);
 
+		if (monkey.points == 100)
+		{
+			dynamicsWorld->removeRigidBody(rigidBody7);
+		}
+		if (monkey.points == 200)
+		{
+			dynamicsWorld->removeRigidBody(rigidBody6);
+		}
 		printText2D(text1, 500, 500, 30);
 		printText2D(text2, 600, 1040, 30);
 

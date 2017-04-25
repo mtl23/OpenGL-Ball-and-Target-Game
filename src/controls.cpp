@@ -12,7 +12,7 @@ using namespace glm;
 #include "player.h"
 
 extern Player_S monkey;
-
+extern Player_S map;
 glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
 
@@ -40,9 +40,9 @@ float mouseSpeed = 0.005f;
 int maxHieght = 4;
 
 void computeMatricesFromInputs(){
-	monkey.Ent->model->position = position;
-	monkey.Ent->model->position.y -= 5;
-	monkey.Ent->model->position.z -= 8;
+	position = monkey.Ent->model->position;
+	position.y += 5;
+	position.z += 8;
 	// glfwGetTime is called only once, the first time this function is called
 	static double lastTime = glfwGetTime();
 
@@ -78,21 +78,21 @@ void computeMatricesFromInputs(){
 	// Up vector
 	glm::vec3 up = glm::cross( right, direction );
 
-	// Move forward
+	// tilt forward
 	if (glfwGetKey( window, GLFW_KEY_UP ) == GLFW_PRESS){
-		position += direction * deltaTime * speed;
+		//position += direction * deltaTime * speed;
 	}
-	// Move backward
+	// tilt backward
 	if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
-		position -= direction * deltaTime * speed;
+		//position -= direction * deltaTime * speed;
 	}
-	// Rotate right
+	// tilt right
 	if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS){
-		position += right * deltaTime * speed;
+		//position += right * deltaTime * speed;
 	}
-	// Strafe left
+	// tilt left
 	if (glfwGetKey( window, GLFW_KEY_LEFT ) == GLFW_PRESS){
-		position -= right * deltaTime * speed;
+		//position -= right * deltaTime * speed;
 	}
 
 	float FoV = initialFoV;
@@ -106,10 +106,10 @@ void computeMatricesFromInputs(){
 								up                  // Head is up (set to 0,-1,0 to look upside-down)
 						   );
 
-	if(position.y <= maxHieght )
-	{
-		position.y = maxHieght;
-	}
+	//if(position.y <= maxHieght )
+	//{
+	//	position.y = maxHieght;
+	//}
 	
 	// For the next frame, the "last time" will be "now"
 	lastTime = currentTime;
