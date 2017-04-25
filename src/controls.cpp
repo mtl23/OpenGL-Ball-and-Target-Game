@@ -83,9 +83,9 @@ void computeMatricesFromInputs(){
 		position += direction * deltaTime * speed;
 	}
 	// Move backward
-	//if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
-	//	position -= direction * deltaTime * speed;
-	//}
+	if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
+		position -= direction * deltaTime * speed;
+	}
 	// Rotate right
 	if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS){
 		position += right * deltaTime * speed;

@@ -39,12 +39,14 @@ void Pickup(Player_S* p1)
 	
 	if(p1->points == 100)
 	{
+		ring1.Ent->model->position.y = 570;
 		ring1.Ent->model->position.z = 50; 
 	}
 
 	if(p1->points == 200)
 	{
 	ring2.Ent->model->position.z = 50;
+	ring2.Ent->model->position.y = 570;
 	}
 
 }

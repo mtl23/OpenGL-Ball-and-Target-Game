@@ -189,7 +189,7 @@ int main( void )
 	btCollisionShape* boxCollisionShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
 	btCollisionShape* boxCollisionShapePlatform = new btBoxShape(btVector3(30.0f, 1.0f, 12.0f));
 	btCollisionShape* boxCollisionShapeTarget = new btBoxShape(btVector3(5, 1.5f, 6));
-	
+	btCollisionShape* ballCollisionShape = new btSphereShape(1);
 	
 	btDefaultMotionState* motionstatemonkey = new btDefaultMotionState(btTransform(
 		btQuaternion(0, 0, 0, 1),
@@ -224,23 +224,23 @@ int main( void )
 	));
 
 	btDefaultMotionState* motionstateMap = new btDefaultMotionState(btTransform(
-		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
-		btVector3(0, 0, -15)
+		btQuaternion( .00, -.71, .08, .71),
+		btVector3(0, -8, -15)
 	));
 
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyMON(
-		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		1,                  // mass, in kg. 0 -> Static object, will never move.
 		motionstatemonkey,
-		boxCollisionShape,  // collision shape of body
-		btVector3(0, 0, 0)    // local inertia
+		ballCollisionShape,  // collision shape of body
+		btVector3(20, 0, 20)    // local inertia
 	);
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyMap(
 		.0,                  // mass, in kg. 0 -> Static object, will never move.
 		motionstateMap,
 		boxCollisionShapePlatform,  // collision shape of body
-		btVector3(0, 0, -15)    // local inertia
+		btVector3(0, 0, 0)    // local inertia
 	);
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyTarget1(
@@ -318,7 +318,7 @@ int main( void )
 		
 
 	monkey = *newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, -0.5f, 14.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
-	map  =	 *newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,0,-15),glm::vec3(3,3,3),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	map  =	 *newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,-8,-15),glm::vec3(3,3,3),glm::quat (.71,.00,-.71,.08));
 	//ball =   *newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, 0.0f, 15.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
 	 
 	ring1 =  *newPlayer("Ring.obj","blondhair.bmp",glm::vec3(5.00f, 2.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
@@ -375,7 +375,9 @@ int main( void )
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		dynamicsWorld->stepSimulation(deltaTime, 1);
+
+	
+
 		computeMatricesFromInputs();
 		entityDrawAll();
 		
@@ -392,7 +394,7 @@ int main( void )
 		glm::mat4 ViewMatrix = getViewMatrix();
 		mydebugdrawer.SetMatrices(ViewMatrix, ProjectionMatrix);
 		dynamicsWorld->debugDrawWorld();
-
+		dynamicsWorld->stepSimulation(deltaTime, 1);
 		// Swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
