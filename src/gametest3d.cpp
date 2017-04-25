@@ -225,7 +225,7 @@ int main( void )
 	));
 
 	btDefaultMotionState* motionstateMap = new btDefaultMotionState(btTransform(
-		btQuaternion( .00, -.71, .08, .71),
+		btQuaternion( -.06, -.71, .08, .71),
 		btVector3(0, -8, -15)
 	));
 
@@ -319,7 +319,7 @@ int main( void )
 		
 
 	monkey = *newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, -0.5f, 14.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
-	map  =	 *newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,-8,-15),glm::vec3(3,3,3),glm::quat (.71,.00,-.71,.08));
+	map  =	 *newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,-8,-15),glm::vec3(3,3,3),glm::quat (.71,-.06,-.71,.08));
 	//ball =   *newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, 0.0f, 15.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
 	 
 	ring1 =  *newPlayer("Ring.obj","blondhair.bmp",glm::vec3(5.00f, 2.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
@@ -386,8 +386,6 @@ int main( void )
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	
 
 		computeMatricesFromInputs();
 		entityDrawAll();
