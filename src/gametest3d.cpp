@@ -135,11 +135,12 @@ int main( void )
 
 	InitEntitySystem(entityMax);
 	initModelSystem();
-
+	int numboxes;
+	numboxes = 10;
 	//Generate positions & rotations for 100 monkeys
-	std::vector<glm::vec3> positions(2);
-	std::vector<glm::quat> orientations(2);
-	for (int i = 0; i<2; i++) {
+	std::vector<glm::vec3> positions(numboxes);
+	std::vector<glm::quat> orientations(numboxes);
+	for (int i = 0; i<numboxes; i++) {
 		positions[i] = glm::vec3(rand() % 20 - 10, rand() % 20 - 10, rand() % 20 - 10);
 		orientations[i] = glm::normalize(glm::quat(glm::vec3(rand() % 360, rand() % 360, rand() % 360)));
 
@@ -168,7 +169,7 @@ int main( void )
 	// A box of 2m*2m*2m (1.0 is the half-extent !)
 	btCollisionShape* boxCollisionShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < numboxes; i++) {
 
 		btDefaultMotionState* motionstate = new btDefaultMotionState(btTransform(
 			btQuaternion(orientations[i].x, orientations[i].y, orientations[i].z, orientations[i].w),
@@ -176,7 +177,7 @@ int main( void )
 		));
 
 		btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
-			.05,                  // mass, in kg. 0 -> Static object, will never move.
+			.0,                  // mass, in kg. 0 -> Static object, will never move.
 			motionstate,
 			boxCollisionShape,  // collision shape of body
 			btVector3(0, 0, 0)    // local inertia
