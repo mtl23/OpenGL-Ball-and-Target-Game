@@ -136,15 +136,34 @@ int main( void )
 	InitEntitySystem(entityMax);
 	initModelSystem();
 	int numboxes;
-	numboxes = 10;
+	numboxes = 6;
 	//Generate positions & rotations for 100 monkeys
 	std::vector<glm::vec3> positions(numboxes);
 	std::vector<glm::quat> orientations(numboxes);
-	for (int i = 0; i<numboxes; i++) {
-		positions[i] = glm::vec3(rand() % 20 - 10, rand() % 20 - 10, rand() % 20 - 10);
-		orientations[i] = glm::normalize(glm::quat(glm::vec3(rand() % 360, rand() % 360, rand() % 360)));
+	//for (int i = 0; i<numboxes; i++) {
+	//	positions[i] = glm::vec3(rand() % 20 - 10, rand() % 20 - 10, rand() % 20 - 10);
+	//	orientations[i] = glm::normalize(glm::quat(glm::vec3(rand() % 360, rand() % 360, rand() % 360)));
 
-	}
+	//positions[0] = glm::vec3(5,2,-20);
+	//orientations[0] = glm::quat(0.71f, 0.00f, -0.71f, 0.00f); //ring 1
+
+	//positions[1] = glm::vec3(-5, 2, -20);
+	//orientations[1] = glm::quat(0.71f, 0.00f, -0.71f, 0.00f); //ring2
+
+	//positions[2] = glm::vec3(-15.00f, -50.0f, -45.0f);
+	//orientations[2] = glm::quat(0.71f, 0.00f, -0.71f, 1.00f); //target 1 /lvl1
+
+	//positions[3] = glm::vec3(0.00f, -50.0f, -60.0f);
+	//orientations[3] = glm::quat(0.71f, 0.00f, -0.71f, 1.00f); //taregt2 /lvl1
+
+	//positions[4] = glm::vec3(15.00f, -50.0f, -65.0f);
+	//orientations[4] = glm::quat(0.71f, 0.00f, -0.71f, 1.00f); //target3 /lvl1
+
+	//positions[5] = glm::vec3(0.00f, 0.0f, -15.0f);
+	//orientations[5] = glm::quat(0.71f, 0.00f, -0.71f, 1.00f); //RAMP /lvl1
+
+
+	//}
 	//Build the broadphase
 	btBroadphaseInterface* broadphase = new btDbvtBroadphase();
 
@@ -168,31 +187,135 @@ int main( void )
 	// In this example, all monkeys will use the same collision shape : 
 	// A box of 2m*2m*2m (1.0 is the half-extent !)
 	btCollisionShape* boxCollisionShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
+	btCollisionShape* boxCollisionShapePlatform = new btBoxShape(btVector3(30.0f, 1.0f, 12.0f));
+	btCollisionShape* boxCollisionShapeTarget = new btBoxShape(btVector3(5, 1.5f, 6));
+	
+	
+	btDefaultMotionState* motionstatemonkey = new btDefaultMotionState(btTransform(
+		btQuaternion(0, 0, 0, 1),
+		btVector3(0, 1, 10)));
 
-	for (int i = 0; i < numboxes; i++) {
 
-		btDefaultMotionState* motionstate = new btDefaultMotionState(btTransform(
-			btQuaternion(orientations[i].x, orientations[i].y, orientations[i].z, orientations[i].w),
-			btVector3(positions[i].x, positions[i].y, positions[i].z)
-		));
+	btDefaultMotionState* motionstateRing1 = new btDefaultMotionState(btTransform(
+		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
+		btVector3(-5, 2, -20)
+	));
+	
+	btDefaultMotionState* motionstateRing2 = new btDefaultMotionState(btTransform(
+		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
+		btVector3(5,2,-20)
+	));
 
-		btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
-			.0,                  // mass, in kg. 0 -> Static object, will never move.
-			motionstate,
-			boxCollisionShape,  // collision shape of body
-			btVector3(0, 0, 0)    // local inertia
-		);
-		btRigidBody *rigidBody = new btRigidBody(rigidBodyCI);
+	btDefaultMotionState* motionstateTarget1 = new btDefaultMotionState(btTransform(
+		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
+		btVector3(-15.00f, -50.0f, -45.0f)
+	));
 
-		rigidbodies.push_back(rigidBody);
-		dynamicsWorld->addRigidBody(rigidBody);
 
-		// Small hack : store the mesh's index "i" in Bullet's User Pointer.
-		//Will be used to know which object is picked. 
-		//A real program would probably pass a "MyGameObjectPointer" instead.
-		rigidBody->setUserPointer((void*)0);
+	btDefaultMotionState* motionstateTarget2 = new btDefaultMotionState(btTransform(
+		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
+		btVector3(0.00f, -50.0f, -60.0f)
+	));
 
-	}
+
+	btDefaultMotionState* motionstateTarget3 = new btDefaultMotionState(btTransform(
+		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
+		btVector3(15.00f, -50.0f, -65.0f)
+	));
+
+	btDefaultMotionState* motionstateMap = new btDefaultMotionState(btTransform(
+		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
+		btVector3(0, 0, -15)
+	));
+
+
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyMON(
+		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		motionstatemonkey,
+		boxCollisionShape,  // collision shape of body
+		btVector3(0, 0, 0)    // local inertia
+	);
+
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyMap(
+		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		motionstateMap,
+		boxCollisionShapePlatform,  // collision shape of body
+		btVector3(0, 0, -15)    // local inertia
+	);
+
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyTarget1(
+		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		motionstateTarget1,
+		boxCollisionShapeTarget,  // collision shape of body
+		btVector3(0, 0, 0)    // local inertia
+	);
+
+
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyTarget2(
+		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		motionstateTarget2,
+		boxCollisionShapeTarget,  // collision shape of body
+		btVector3(0, 0, 0)    // local inertia
+	);
+
+
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyTarget3(
+		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		motionstateTarget3,
+		boxCollisionShapeTarget,  // collision shape of body
+		btVector3(0, 0, 0)    // local inertia
+	);
+
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyRing1(
+		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		motionstateRing1,
+		boxCollisionShape,  // collision shape of body
+		btVector3(0, 0, 0)    // local inertia
+	);
+
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyRing2(
+		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		motionstateRing2,
+		boxCollisionShape,  // collision shape of body
+		btVector3(0, 0, 0)    // local inertia
+	);
+
+
+
+	btRigidBody *rigidBody = new btRigidBody(rigidBodyMON);
+	rigidbodies.push_back(rigidBody);
+	dynamicsWorld->addRigidBody(rigidBody);
+
+	btRigidBody *rigidBody2 = new btRigidBody(rigidBodyMap);
+	rigidbodies.push_back(rigidBody2);
+	dynamicsWorld->addRigidBody(rigidBody2);
+
+	btRigidBody *rigidBody3 = new btRigidBody(rigidBodyTarget1);
+	rigidbodies.push_back(rigidBody3);
+	dynamicsWorld->addRigidBody(rigidBody3);
+
+	btRigidBody *rigidBody4 = new btRigidBody(rigidBodyTarget2);
+	rigidbodies.push_back(rigidBody4);
+	dynamicsWorld->addRigidBody(rigidBody4);
+
+	btRigidBody *rigidBody5 = new btRigidBody(rigidBodyTarget3);
+	rigidbodies.push_back(rigidBody4);
+	dynamicsWorld->addRigidBody(rigidBody5);
+
+	btRigidBody *rigidBody6 = new btRigidBody(rigidBodyRing1);
+	rigidbodies.push_back(rigidBody6);
+	dynamicsWorld->addRigidBody(rigidBody6);
+
+	btRigidBody *rigidBody7 = new btRigidBody(rigidBodyRing2);
+	rigidbodies.push_back(rigidBody7);
+	dynamicsWorld->addRigidBody(rigidBody7);
+
+	// Small hack : store the mesh's index "i" in Bullet's User Pointer.
+	//Will be used to know which object is picked. 
+	//A real program would probably pass a "MyGameObjectPointer" instead.
+	rigidBody->setUserPointer((void*)0);
+
+		
 
 	monkey = *newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, -0.5f, 14.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
 	map  =	 *newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,0,-15),glm::vec3(3,3,3),glm::quat (0.71f,0.00f,-0.71f,0.00f));
