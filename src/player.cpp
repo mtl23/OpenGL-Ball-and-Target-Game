@@ -8,11 +8,19 @@
 #include "model.h"
 #include "player.h"
 
+btQuaternion targetRot = btQuaternion(0.71f, 0.00f, -0.71f, 0.00f);
+
 extern Player_S target1;
 extern Player_S target2;
 extern Player_S target3;
 extern	Player_S ring1;
 extern	Player_S ring2;
+extern btRigidBody *rigidBody3;
+extern btRigidBody *rigidBody4;
+extern btRigidBody *rigidBody5;
+extern btVector3 t1;
+extern btVector3 t2;
+extern btVector3 t3;
 int mapNum;
 Player_S* newPlayer(char* path,char* texture, glm::vec3 position,glm::vec3 scale, glm::quat orientation) 
 {
@@ -53,7 +61,9 @@ void Pickup(Player_S* p1)
 
 void ChangeMap()
  {
-	 
+
+
+	slog("i",mapNum);
 	 mapNum++;
 	 if(mapNum>3)
 	 {
@@ -64,21 +74,30 @@ void ChangeMap()
 
 		 {
 		 case (1):
-		target1.Ent->model->position = glm::vec3(-15.00f, -20.0f, -55.0f);
-		target2.Ent->model->position = glm::vec3(0.00f, -20.0f,-55.0f);
-		target3.Ent->model->position = glm::vec3(15.00f, -20.0f, -55.0f);
+		target1.Ent->model->position = glm::vec3(-35.00f, -50.0f, -55.0f);
+		rigidBody3->setWorldTransform(btTransform(btQuaternion(targetRot), t1 ));
+		target2.Ent->model->position = glm::vec3(0.00f, -50.0f,-60.0f);
+		rigidBody4->setWorldTransform(btTransform(btQuaternion(targetRot), t2));
+		target3.Ent->model->position = glm::vec3(35.00f, -50.0f, -65.0f);
+		rigidBody5->setWorldTransform(btTransform(btQuaternion(targetRot), t3));
 		break;
 	 
 		 case (2):
-		target1.Ent->model->position = glm::vec3(0.00f, -50.0f, -45.0f);
-        target2.Ent->model->position = glm::vec3(0.00f, -50.0f,-56.0f);
-        target3.Ent->model->position = glm::vec3(0.00f, -50.0f, -78.0f);
-		break;
+			 target1.Ent->model->position = glm::vec3(0.00f, -50.0f, -40.0f);
+			 rigidBody3->setWorldTransform ( btTransform(btQuaternion(targetRot),(btVector3(0.00f, -50.0f, -40.0f))));
+			 target2.Ent->model->position = glm::vec3(0.00f, -50.0f, -60.0f);
+			 rigidBody4->setWorldTransform (btTransform(btQuaternion(targetRot), (btVector3(0.00f, -50.0f, -60.0f))));
+			 target3.Ent->model->position = glm::vec3(0.00f, -50.0f, -80.0f);
+			 rigidBody5->setWorldTransform  ( btTransform(btQuaternion(targetRot), (btVector3(0.00f, -50.0f, -80.0f))));
+			 break;
 
 		 case (3):
-		target1.Ent->model->position = glm::vec3(-15.00f, -50.0f, -55.0f);
-		target2.Ent->model->position = glm::vec3(0.00f, -50.0f,-70.0f);
-		target3.Ent->model->position = glm::vec3(15.00f, -50.0f, -55.0f);
+			 target1.Ent->model->position = glm::vec3(0.00f, -50.0f, -40.0f);
+			 rigidBody3->setWorldTransform(btTransform(btQuaternion(targetRot), (btVector3(0.00f, -50.0f, -40.0f))));
+			 target2.Ent->model->position = glm::vec3(0.00f, -50.0f, -60.0f);
+			 rigidBody4->setWorldTransform(btTransform(btQuaternion(targetRot), (btVector3(0.00f, -50.0f, -60.0f))));
+			 target3.Ent->model->position = glm::vec3(0.00f, -50.0f, -80.0f);
+			 rigidBody5->setWorldTransform(btTransform(btQuaternion(targetRot), (btVector3(0.00f, -50.0f, -80.0f))));
 		 break;
 		 }
 	 return;

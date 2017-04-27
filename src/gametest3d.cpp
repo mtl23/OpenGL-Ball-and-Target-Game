@@ -55,13 +55,18 @@ using namespace glm;
 	Player_S target3;
 
 	Player_S map;
-	//Player_S ball;
 	Player_S monkey;
-
+	btRigidBody *rigidBody3;
+	btRigidBody *rigidBody4;
+	btRigidBody *rigidBody5;
+	btRigidBody *rigidBody6;
+	btRigidBody *rigidBody7;
+	btVector3 t1;
+	btVector3 t2;
+	btVector3 t3;
 	int points = 0;
-	int mapnum = 1;
 	int touch = 0;
-
+	extern int mapNum;
 
 
 	class BulletDebugDrawer_DeprecatedOpenGL : public btIDebugDraw {
@@ -96,13 +101,8 @@ using namespace glm;
 	   {
 			if( action ==GLFW_RELEASE)
 				{
+				slog("Pressed Enter");
 		
-					ChangeMap();
-				mapnum += 1;
-				if(mapnum>3)
-					  {
-					  mapnum = 1;
-					  }
 				}
 	   }
 
@@ -142,35 +142,9 @@ int main( void )
 
 	InitEntitySystem(entityMax);
 	initModelSystem();
-	int numboxes;
-	numboxes = 6;
-	//Generate positions & rotations for 100 monkeys
-	std::vector<glm::vec3> positions(numboxes);
-	std::vector<glm::quat> orientations(numboxes);
-	//for (int i = 0; i<numboxes; i++) {
-	//	positions[i] = glm::vec3(rand() % 20 - 10, rand() % 20 - 10, rand() % 20 - 10);
-	//	orientations[i] = glm::normalize(glm::quat(glm::vec3(rand() % 360, rand() % 360, rand() % 360)));
 
-	//positions[0] = glm::vec3(5,2,-20);
-	//orientations[0] = glm::quat(0.71f, 0.00f, -0.71f, 0.00f); //ring 1
+	mapNum = 1;
 
-	//positions[1] = glm::vec3(-5, 2, -20);
-	//orientations[1] = glm::quat(0.71f, 0.00f, -0.71f, 0.00f); //ring2
-
-	//positions[2] = glm::vec3(-15.00f, -50.0f, -45.0f);
-	//orientations[2] = glm::quat(0.71f, 0.00f, -0.71f, 1.00f); //target 1 /lvl1
-
-	//positions[3] = glm::vec3(0.00f, -50.0f, -60.0f);
-	//orientations[3] = glm::quat(0.71f, 0.00f, -0.71f, 1.00f); //taregt2 /lvl1
-
-	//positions[4] = glm::vec3(15.00f, -50.0f, -65.0f);
-	//orientations[4] = glm::quat(0.71f, 0.00f, -0.71f, 1.00f); //target3 /lvl1
-
-	//positions[5] = glm::vec3(0.00f, 0.0f, -15.0f);
-	//orientations[5] = glm::quat(0.71f, 0.00f, -0.71f, 1.00f); //RAMP /lvl1
-
-
-	//}
 	//Build the broadphase
 	btBroadphaseInterface* broadphase = new btDbvtBroadphase();
 
@@ -191,21 +165,23 @@ int main( void )
 
 	std::vector<btRigidBody*> rigidbodies;
 	glm::vec3 v0;
-	// In this example, all monkeys will use the same collision shape : 
-	// A box of 2m*2m*2m (1.0 is the half-extent !)
+
+
 	btCollisionShape* boxCollisionShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
 	btCollisionShape* boxCollisionShapePlatform = new btBoxShape(btVector3(30.0f, 1.0f, 12.0f));
-	btCollisionShape* boxCollisionShapeTarget = new btBoxShape(btVector3(5, 1.5f, 6));
+	btCollisionShape* boxCollisionShapeTarget = new btBoxShape(btVector3(8.4, 1.f, 10.4));
 	btCollisionShape* ballCollisionShape = new btSphereShape(1);
 	
+
+	t1 = btVector3(-36, -49, -55);
+	t2 = btVector3(-1, -49, -60);
+	t3 = btVector3(34, -49, -65);
+	btTransform spawn = btTransform( btQuaternion(0, 0, 0, 1), btVector3(0, 1, 10) );
 
 	btDefaultMotionState* motionstatemonkey = new btDefaultMotionState(btTransform(
 		btQuaternion(0, 0, 0, 1),
 		btVector3(0, 1, 10)));
-
-
-
-
+	
 	btDefaultMotionState* motionstateRing1 = new btDefaultMotionState(btTransform(
 		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
 		btVector3(-5, -7, -20)
@@ -218,19 +194,19 @@ int main( void )
 
 	btDefaultMotionState* motionstateTarget1 = new btDefaultMotionState(btTransform(
 		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
-		btVector3(-15.00f, -50.0f, -45.0f)
+		btVector3(t1)
 	));
 
 
 	btDefaultMotionState* motionstateTarget2 = new btDefaultMotionState(btTransform(
 		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
-		btVector3(0.00f, -50.0f, -60.0f)
+		btVector3(t2)
 	));
 
 
 	btDefaultMotionState* motionstateTarget3 = new btDefaultMotionState(btTransform(
 		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
-		btVector3(15.00f, -50.0f, -65.0f)
+		btVector3(t3)
 	));
 
 	btDefaultMotionState* motionstateMap = new btDefaultMotionState(btTransform(
@@ -243,7 +219,7 @@ int main( void )
 		1,                  // mass, in kg. 0 -> Static object, will never move.
 		motionstatemonkey,
 		ballCollisionShape,  // collision shape of body
-		btVector3(2, 0,2)    // local inertia //center of mass aka moment of interia
+		btVector3(2, 0,22)    // local inertia //center of mass aka moment of interia
 	);
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyMap(
@@ -289,9 +265,7 @@ int main( void )
 		boxCollisionShape,  // collision shape of body
 		btVector3(0, 0, 0)    // local inertia
 	);
-
-
-
+	
 	btRigidBody *rigidBody = new btRigidBody(rigidBodyMON);
 	rigidbodies.push_back(rigidBody);
 	dynamicsWorld->addRigidBody(rigidBody);
@@ -300,19 +274,19 @@ int main( void )
 	rigidbodies.push_back(rigidBody2);
 	dynamicsWorld->addRigidBody(rigidBody2);
 
-	btRigidBody *rigidBody3 = new btRigidBody(rigidBodyTarget1);
+	rigidBody3 = new btRigidBody(rigidBodyTarget1);
 	rigidbodies.push_back(rigidBody3);
 	dynamicsWorld->addRigidBody(rigidBody3);
 
-	btRigidBody *rigidBody4 = new btRigidBody(rigidBodyTarget2);
+	 rigidBody4 = new btRigidBody(rigidBodyTarget2);
 	rigidbodies.push_back(rigidBody4);
 	dynamicsWorld->addRigidBody(rigidBody4);
 
-	btRigidBody *rigidBody5 = new btRigidBody(rigidBodyTarget3);
+	rigidBody5 = new btRigidBody(rigidBodyTarget3);
 	rigidbodies.push_back(rigidBody5);
 	dynamicsWorld->addRigidBody(rigidBody5);
 
-	btRigidBody *rigidBody6 = new btRigidBody(rigidBodyRing1);
+	rigidBody6 = new btRigidBody(rigidBodyRing1);
 	rigidbodies.push_back(rigidBody6);
 	dynamicsWorld->addRigidBody(rigidBody6);
 
@@ -320,30 +294,19 @@ int main( void )
 	rigidbodies.push_back(rigidBody7);
 	dynamicsWorld->addRigidBody(rigidBody7);
 
-	// Small hack : store the mesh's index "i" in Bullet's User Pointer.
-	//Will be used to know which object is picked. 
-	//A real program would probably pass a "MyGameObjectPointer" instead.
-	rigidBody->setUserPointer((void*)0);
-
-
-
 	monkey = *newPlayer("ballobj.obj","ball1.bmp",glm::vec3(0.00f, -0.5f, 14.0f),glm::vec3(.23f,.23f,.23f),glm::quat (0,0,0,0));
 	map  =	 *newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,-8,-15),glm::vec3(3,3,3),glm::quat (.71,-.06,-.71,.08));
-	//ball =   *newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, 0.0f, 15.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
-	 
+
 	ring1 =  *newPlayer("Ring.obj","blondhair.bmp",glm::vec3(5.00f, -7.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	ring2 =  *newPlayer("Ring2.obj","blondhair.bmp",glm::vec3(-5.00f, -7.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 
-	target1 = *newPlayer("crate.obj","greenhair.bmp",glm::vec3(-15.00f, -50.0f, -45.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	target2 = *newPlayer("crate2.obj","redhair.bmp",glm::vec3(0.00f, -50.0f,-60.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	target3 = *newPlayer("crate3.obj","blondhair.bmp",glm::vec3(15.00f, -50.0f, -65.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target1 = *newPlayer("crate.obj","greenhair.bmp",glm::vec3(-35.00f, -50.0f, -55.0f),glm::vec3(.9f, .1f, 1.1f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target2 = *newPlayer("crate2.obj","redhair.bmp",glm::vec3(0.00f, -50.0f,-60.0f),glm::vec3(.9f,.1f,1.1f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target3 = *newPlayer("crate3.obj","blondhair.bmp",glm::vec3(35.00f, -50.0f, -65.0f),glm::vec3(.9f, .1f, 1.1f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	
-	// Ensure we can capture the escape key being pressed below
+
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    // Hide the mouse and enable unlimited mouvement
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    
-    // Set the mouse at the center of the screen
     glfwPollEvents();
     glfwSetCursorPos(window, 1024/2, 768/2);
 
@@ -351,29 +314,27 @@ int main( void )
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 	
-	
-	// Initialize our little text library with the Holstein font
+
 	initText2D( "Holstein.DDS" );
 
-	// For speed computation
 	double lastTime = glfwGetTime();
 	double lastFrameTime = lastTime;
 	int nbFrames = 0;
 
 	do{
-		
+
 		btQuaternion O0 = rigidBody->getOrientation();
 
-
-		//[1 0 1]
-		//[0 1 1]
-		//[0 0 1]
-
 		btVector3 p0 = rigidBody->getCenterOfMassPosition();
-		monkey.Ent->model->position.x = p0.x();
-		monkey.Ent->model->position.y = p0.y();
-		monkey.Ent->model->position.z = p0.z();
+		if (p0.y() <= -75)
+		{
+			ChangeMap();
+			rigidBody->setWorldTransform(spawn);
+			p0 = (btVector3(0, 1, 10));
+		}
 		
+		BTVEC32GLMVEC3(monkey.Ent->model->position, p0);
+
 		BTQUAT2GLMQUAT(monkey.Ent->model->orientation,O0);
 		programID = LoadShaders("shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader");
 		glUseProgram(programID);
@@ -396,7 +357,7 @@ int main( void )
 			lastTime += 1.0;
 		}
 
-		// Clear the screen
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		computeMatricesFromInputs();
@@ -405,7 +366,7 @@ int main( void )
 		char text1[256];
 		char text2[256];
 	
-		sprintf(text1,"Level: %i", mapnum );
+		sprintf(text1,"Level: %i", mapNum );
 		sprintf(text2,"%i", monkey.points);
 
 		if (monkey.points == 100)

@@ -9,6 +9,12 @@
 							(GLM).w = (BT).w(); 
 
 
+#define BTVEC32GLMVEC3(GLM,BT) (GLM).x = (BT).x(); \
+							(GLM).y = (BT).y(); \
+							(GLM).z = (BT).z(); 
+		
+					 
+
 	typedef struct Space_S
 	{
 	
