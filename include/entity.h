@@ -28,6 +28,7 @@ struct	Model_S* model;
 	float maxZ;
 	float minZ;
 
+	
 	btCollisionShape* boxCollisionShape;
 
 	int next_think;/**time index for next_think<*/

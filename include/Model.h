@@ -52,6 +52,8 @@ typedef struct Model_S
 	GLuint normalbuffer;
 	GLuint elementbuffer;
 
+	glm::vec3 offset;
+
 	GLuint Texture;
 	glm::vec3 position;
 	glm::vec3 scale;

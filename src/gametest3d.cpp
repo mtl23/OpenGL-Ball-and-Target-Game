@@ -38,6 +38,12 @@ using namespace glm;
 #include "Physics.h"
 
 
+//#define BTQUAT2GLMQUAT(GLM,BT) (GLM).x = (BT).x(); \
+//							(GLM).y = (BT).y(); \
+//							(GLM).z = (BT).z(); \
+//							(GLM).w = (BT).w(); 
+
+
 	extern int entityMax;
 	GLFWwindow* window;
 	GLuint programID;
@@ -119,7 +125,7 @@ int main( void )
                 {
                    printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );  
                 }
-
+	
   Mix_Music *level_music;
   level_music = Mix_LoadMUS( "balrog.mid" );
 	// Initialise GLFW
@@ -192,19 +198,22 @@ int main( void )
 	btCollisionShape* boxCollisionShapeTarget = new btBoxShape(btVector3(5, 1.5f, 6));
 	btCollisionShape* ballCollisionShape = new btSphereShape(1);
 	
+
 	btDefaultMotionState* motionstatemonkey = new btDefaultMotionState(btTransform(
 		btQuaternion(0, 0, 0, 1),
 		btVector3(0, 1, 10)));
 
 
+
+
 	btDefaultMotionState* motionstateRing1 = new btDefaultMotionState(btTransform(
 		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
-		btVector3(-5, 2, -20)
+		btVector3(-5, -7, -20)
 	));
 	
 	btDefaultMotionState* motionstateRing2 = new btDefaultMotionState(btTransform(
 		btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
-		btVector3(5,2,-20)
+		btVector3(5,-7,-20)
 	));
 
 	btDefaultMotionState* motionstateTarget1 = new btDefaultMotionState(btTransform(
@@ -234,7 +243,7 @@ int main( void )
 		1,                  // mass, in kg. 0 -> Static object, will never move.
 		motionstatemonkey,
 		ballCollisionShape,  // collision shape of body
-		btVector3(20, 0, 20)    // local inertia
+		btVector3(2, 0,2)    // local inertia //center of mass aka moment of interia
 	);
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyMap(
@@ -300,7 +309,7 @@ int main( void )
 	dynamicsWorld->addRigidBody(rigidBody4);
 
 	btRigidBody *rigidBody5 = new btRigidBody(rigidBodyTarget3);
-	rigidbodies.push_back(rigidBody4);
+	rigidbodies.push_back(rigidBody5);
 	dynamicsWorld->addRigidBody(rigidBody5);
 
 	btRigidBody *rigidBody6 = new btRigidBody(rigidBodyRing1);
@@ -316,14 +325,14 @@ int main( void )
 	//A real program would probably pass a "MyGameObjectPointer" instead.
 	rigidBody->setUserPointer((void*)0);
 
-		
 
-	monkey = *newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, -0.5f, 14.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
+
+	monkey = *newPlayer("ballobj.obj","ball1.bmp",glm::vec3(0.00f, -0.5f, 14.0f),glm::vec3(.23f,.23f,.23f),glm::quat (0,0,0,0));
 	map  =	 *newPlayer("model3.obj","floor_tiles.bmp",glm::vec3(0,-8,-15),glm::vec3(3,3,3),glm::quat (.71,-.06,-.71,.08));
 	//ball =   *newPlayer("ballkirby.obj","ball1.bmp",glm::vec3(0.00f, 0.0f, 15.0f),glm::vec3(.25f,.25f,.25f),glm::quat (0,0,0,0));
 	 
-	ring1 =  *newPlayer("Ring.obj","blondhair.bmp",glm::vec3(5.00f, 2.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	ring2 =  *newPlayer("Ring2.obj","blondhair.bmp",glm::vec3(-5.00f, 2.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	ring1 =  *newPlayer("Ring.obj","blondhair.bmp",glm::vec3(5.00f, -7.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	ring2 =  *newPlayer("Ring2.obj","blondhair.bmp",glm::vec3(-5.00f, -7.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 
 	target1 = *newPlayer("crate.obj","greenhair.bmp",glm::vec3(-15.00f, -50.0f, -45.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	target2 = *newPlayer("crate2.obj","redhair.bmp",glm::vec3(0.00f, -50.0f,-60.0f),glm::vec3(.5f,.1f,.7f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
@@ -352,17 +361,20 @@ int main( void )
 	int nbFrames = 0;
 
 	do{
-	
-		btVector3 p0 = rigidbodies[0]->getCenterOfMassPosition();
-		btQuaternion O0 = rigidbodies[0]->getOrientation();
-		monkey.Ent->model->orientation.w = O0.w();
-		monkey.Ent->model->orientation.x = O0.x();
-		monkey.Ent->model->orientation.y = O0.y();
-		monkey.Ent->model->orientation.z = O0.z();
+		
+		btQuaternion O0 = rigidBody->getOrientation();
+
+
+		//[1 0 1]
+		//[0 1 1]
+		//[0 0 1]
+
+		btVector3 p0 = rigidBody->getCenterOfMassPosition();
 		monkey.Ent->model->position.x = p0.x();
-		monkey.Ent->model->position.y = (p0.y()-2);
+		monkey.Ent->model->position.y = p0.y();
 		monkey.Ent->model->position.z = p0.z();
-		printf("p0 : %f %f %f, monkey : %f %f %f\n", p0.x(), p0.y(), p0.z(), monkey.Ent->model->position.x, monkey.Ent->model->position.y, monkey.Ent->model->position.z);
+		
+		BTQUAT2GLMQUAT(monkey.Ent->model->orientation,O0);
 		programID = LoadShaders("shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader");
 		glUseProgram(programID);
 		double currentTime = glfwGetTime();

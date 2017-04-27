@@ -165,8 +165,9 @@ Model_S* newModel( const char * path, const char * texture )
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, modelList[i].indices.size() * sizeof(unsigned short), &modelList[i].indices[0] , GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
-
-	
+	//if (i==2) {
+	//	modelList[i].offset = glm::vec3(0, -2, 0);
+	//}
 	modelList[i].Texture = loadBMP_custom(texture);
 
 	return &modelList[i];
@@ -248,7 +249,7 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->elementbuffer);
 
 		glm::mat4 RotationMatrix = mat4_cast(model->orientation);
-		glm::mat4 TranslationMatrix = translate(mat4(), model->position); // places into position
+		glm::mat4 TranslationMatrix = translate(mat4(), model->offset) *translate(mat4(), model->position); // places into position
 		glm::mat4 ScalingMatrix = scale(mat4(), model->scale); //here we sacle
 		glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
