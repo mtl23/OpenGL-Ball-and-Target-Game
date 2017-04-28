@@ -18,9 +18,12 @@ extern	Player_S ring2;
 extern btRigidBody *rigidBody3;
 extern btRigidBody *rigidBody4;
 extern btRigidBody *rigidBody5;
+extern btRigidBody *rigidBody6;
+extern btRigidBody *rigidBody7;
 extern btVector3 t1;
 extern btVector3 t2;
 extern btVector3 t3;
+extern btDiscreteDynamicsWorld* dynamicsWorld;
 int mapNum;
 Player_S* newPlayer(char* path,char* texture, glm::vec3 position,glm::vec3 scale, glm::quat orientation) 
 {
@@ -31,6 +34,7 @@ Player_S* newPlayer(char* path,char* texture, glm::vec3 position,glm::vec3 scale
 	User.points = 0;
 	//User.Ent.update = UpdatePlayer;
 	User.Ent->draw = drawModel;
+	
 	User.Ent->think = ThinkPlayer;
 	//User.Ent.touch = TouchPlayer;
 	User.Ent->model->orientation = orientation;
@@ -45,16 +49,24 @@ void Pickup(Player_S* p1)
 	
 	p1->points += 100;
 	
-	if(p1->points == 100)
+	if (p1->Ent->model->position.x <= 0)  // if(p1->Ent->model->position.x <= 0)
 	{
-		ring1.Ent->model->position.y = 570;
-		ring1.Ent->model->position.z = 50; 
+		ring2.Ent->model->position.y = 570;
+		ring2.Ent->model->position.z = 50; 
+		rigidBody6->setWorldTransform(btTransform(
+			btQuaternion(-.06, -.71, .08, .71),
+			btVector3(0, 80000, -15)
+		));
 	}
 
-	if(p1->points == 200)
+	if (p1->Ent->model->position.x >= 0) // if(p1->Ent->model->position.x >= 0)
 	{
-	ring2.Ent->model->position.z = 50;
-	ring2.Ent->model->position.y = 570;
+	ring1.Ent->model->position.z = 50;
+	ring1.Ent->model->position.y = 570;
+	rigidBody7->setWorldTransform(btTransform(
+		btQuaternion(-.06, -.71, .08, .71),
+		btVector3(0, 80000, -15)
+	));
 	}
 
 }
@@ -92,14 +104,28 @@ void ChangeMap()
 			 break;
 
 		 case (3):
-			 target1.Ent->model->position = glm::vec3(0.00f, -50.0f, -40.0f);
-			 rigidBody3->setWorldTransform(btTransform(btQuaternion(targetRot), (btVector3(0.00f, -50.0f, -40.0f))));
-			 target2.Ent->model->position = glm::vec3(0.00f, -50.0f, -60.0f);
-			 rigidBody4->setWorldTransform(btTransform(btQuaternion(targetRot), (btVector3(0.00f, -50.0f, -60.0f))));
-			 target3.Ent->model->position = glm::vec3(0.00f, -50.0f, -80.0f);
-			 rigidBody5->setWorldTransform(btTransform(btQuaternion(targetRot), (btVector3(0.00f, -50.0f, -80.0f))));
+			 target1.Ent->model->position = glm::vec3(40.00f, -50.0f, -40.0f);
+			 rigidBody3->setWorldTransform(btTransform(btQuaternion(targetRot), (btVector3(40.00f, -50.0f, -40.0f))));
+			 target2.Ent->model->position = glm::vec3(-40.00f, -50.0f, -40.0f);
+			 rigidBody4->setWorldTransform(btTransform(btQuaternion(targetRot), (btVector3(-40.00f, -50.0f, -40.0f))));
+			 target3.Ent->model->position = glm::vec3(0.00f, -50.0f, -60.0f);
+			 rigidBody5->setWorldTransform(btTransform(btQuaternion(targetRot), (btVector3(0.00f, -50.0f, -60.0f))));
 		 break;
 		 }
+
+
+	 rigidBody7->setWorldTransform(btTransform(
+		 btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
+		 btVector3(5, -8, -20)
+	 ));
+	 ring1.Ent->model->position = glm::vec3(5, -8, -20);
+
+	 rigidBody6->setWorldTransform(btTransform(
+		 btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
+		 btVector3(-5, -8, -20)
+	 ));
+	 ring2.Ent->model->position = glm::vec3(-5,-8,-20);
+
 	 return;
  }
 

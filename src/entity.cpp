@@ -76,6 +76,7 @@ Entity_S* EntityNew()
 			exit(1);
 		}
 		 numEntity++;
+		 entityList[i].id = i;
 		 entityList[i].inuse = 1;
 		 entityList[i].draw  = drawModel;
 		 return &entityList[i];

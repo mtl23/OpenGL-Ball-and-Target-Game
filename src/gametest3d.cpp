@@ -37,6 +37,20 @@ using namespace glm;
 
 #include "Physics.h"
 
+struct Collision_CallbackTarget : btCollisionWorld::ContactResultCallback {
+
+	virtual btScalar addSingleResult(btManifoldPoint& cp,
+		const btCollisionObjectWrapper* colObj0, int partId0, int index0,
+		const btCollisionObjectWrapper* colObj1, int partId1, int index1)
+	{
+
+		
+		slog("collision with target");
+		return 0;
+	}
+};
+
+
 
 //#define BTQUAT2GLMQUAT(GLM,BT) (GLM).x = (BT).x(); \
 //							(GLM).y = (BT).y(); \
@@ -56,6 +70,8 @@ using namespace glm;
 
 	Player_S map;
 	Player_S monkey;
+	btRigidBody *rigidBody;
+	btRigidBody *rigidBody2;
 	btRigidBody *rigidBody3;
 	btRigidBody *rigidBody4;
 	btRigidBody *rigidBody5;
@@ -68,6 +84,19 @@ using namespace glm;
 	int touch = 0;
 	extern int mapNum;
 
+
+	struct Collision_CallbackRing : btCollisionWorld::ContactResultCallback {
+
+		virtual btScalar addSingleResult(btManifoldPoint& cp,
+			const btCollisionObjectWrapper* colObj0, int partId0, int index0,
+			const btCollisionObjectWrapper* colObj1, int partId1, int index1)
+		{
+			//slog("%i", colObj1->getCollisionObject()->getCompanionId());
+			slog("collision with ring ");
+			Pickup(&monkey);
+			return 0;
+		}
+	};
 
 	class BulletDebugDrawer_DeprecatedOpenGL : public btIDebugDraw {
 	public:
@@ -99,7 +128,7 @@ using namespace glm;
 {
 	   if(key == GLFW_KEY_ENTER  )
 	   {
-			if( action ==GLFW_RELEASE)
+			if( action ==GLFW_PRESS)
 				{
 				slog("Pressed Enter");
 		
@@ -168,8 +197,8 @@ int main( void )
 
 
 	btCollisionShape* boxCollisionShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
-	btCollisionShape* boxCollisionShapePlatform = new btBoxShape(btVector3(30.0f, 1.0f, 12.0f));
-	btCollisionShape* boxCollisionShapeTarget = new btBoxShape(btVector3(8.4, 1.f, 10.4));
+	btCollisionShape* boxCollisionShapePlatform = new btBoxShape(btVector3(30.0f, 1.5f, 12.0f));
+	btCollisionShape* boxCollisionShapeTarget = new btBoxShape(btVector3(16.7, 1.f, 20.5));
 	btCollisionShape* ballCollisionShape = new btSphereShape(1);
 	
 
@@ -211,66 +240,68 @@ int main( void )
 
 	btDefaultMotionState* motionstateMap = new btDefaultMotionState(btTransform(
 		btQuaternion( -.06, -.71, .08, .71),
-		btVector3(0, -8, -15)
+		btVector3(0, -9, -15)
 	));
 
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyMON(
-		1,                  // mass, in kg. 0 -> Static object, will never move.
+		10,                
 		motionstatemonkey,
-		ballCollisionShape,  // collision shape of body
-		btVector3(2, 0,22)    // local inertia //center of mass aka moment of interia
+		ballCollisionShape,  
+		btVector3(-1, 0,-1)    
 	);
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyMap(
-		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		.0,                  
 		motionstateMap,
-		boxCollisionShapePlatform,  // collision shape of body
-		btVector3(0, 0, 0)    // local inertia
+		boxCollisionShapePlatform,  
+		btVector3(0, 0, 0)   
 	);
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyTarget1(
-		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		.0,                  
 		motionstateTarget1,
-		boxCollisionShapeTarget,  // collision shape of body
-		btVector3(0, 0, 0)    // local inertia
+		boxCollisionShapeTarget,  
+		btVector3(0, 0, 0)   
 	);
 
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyTarget2(
-		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		.0,                  
 		motionstateTarget2,
-		boxCollisionShapeTarget,  // collision shape of body
-		btVector3(0, 0, 0)    // local inertia
+		boxCollisionShapeTarget,  
+		btVector3(0, 0, 0)   
 	);
 
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyTarget3(
-		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		.0,                  
 		motionstateTarget3,
-		boxCollisionShapeTarget,  // collision shape of body
-		btVector3(0, 0, 0)    // local inertia
+		boxCollisionShapeTarget,  
+		btVector3(0, 0, 0)   
 	);
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyRing1(
-		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		.0,                  
 		motionstateRing1,
-		boxCollisionShape,  // collision shape of body
-		btVector3(0, 0, 0)    // local inertia
+		boxCollisionShape,  
+		btVector3(0, 0, 0)   
 	);
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyRing2(
-		.0,                  // mass, in kg. 0 -> Static object, will never move.
+		.0,                  
 		motionstateRing2,
-		boxCollisionShape,  // collision shape of body
-		btVector3(0, 0, 0)    // local inertia
+		boxCollisionShape,  
+		btVector3(0, 0, 0)   
 	);
 	
-	btRigidBody *rigidBody = new btRigidBody(rigidBodyMON);
+	rigidBody = new btRigidBody(rigidBodyMON);
 	rigidbodies.push_back(rigidBody);
+	rigidBody->setCompanionId(5);
+
 	dynamicsWorld->addRigidBody(rigidBody);
 
-	btRigidBody *rigidBody2 = new btRigidBody(rigidBodyMap);
+	rigidBody2 = new btRigidBody(rigidBodyMap);
 	rigidbodies.push_back(rigidBody2);
 	dynamicsWorld->addRigidBody(rigidBody2);
 
@@ -290,7 +321,7 @@ int main( void )
 	rigidbodies.push_back(rigidBody6);
 	dynamicsWorld->addRigidBody(rigidBody6);
 
-	btRigidBody *rigidBody7 = new btRigidBody(rigidBodyRing2);
+	rigidBody7 = new btRigidBody(rigidBodyRing2);
 	rigidbodies.push_back(rigidBody7);
 	dynamicsWorld->addRigidBody(rigidBody7);
 
@@ -300,9 +331,9 @@ int main( void )
 	ring1 =  *newPlayer("Ring.obj","blondhair.bmp",glm::vec3(5.00f, -7.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	ring2 =  *newPlayer("Ring2.obj","blondhair.bmp",glm::vec3(-5.00f, -7.0f, -20.0f),glm::vec3(.5f,.5f,.5f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 
-	target1 = *newPlayer("crate.obj","greenhair.bmp",glm::vec3(-35.00f, -50.0f, -55.0f),glm::vec3(.9f, .1f, 1.1f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	target2 = *newPlayer("crate2.obj","redhair.bmp",glm::vec3(0.00f, -50.0f,-60.0f),glm::vec3(.9f,.1f,1.1f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
-	target3 = *newPlayer("crate3.obj","blondhair.bmp",glm::vec3(35.00f, -50.0f, -65.0f),glm::vec3(.9f, .1f, 1.1f),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target1 = *newPlayer("crate.obj","greenhair.bmp",glm::vec3(-35.00f, -50.0f, -55.0f),glm::vec3(2, .1f, 2),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target2 = *newPlayer("crate2.obj","redhair.bmp",glm::vec3(0.00f, -50.0f,-60.0f),glm::vec3(2,.1f,2),glm::quat (0.71f,0.00f,-0.71f,0.00f));
+	target3 = *newPlayer("crate3.obj","blondhair.bmp",glm::vec3(35.00f, -50.0f, -65.0f),glm::vec3(2, .1f, 2),glm::quat (0.71f,0.00f,-0.71f,0.00f));
 	
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -326,10 +357,12 @@ int main( void )
 		btQuaternion O0 = rigidBody->getOrientation();
 
 		btVector3 p0 = rigidBody->getCenterOfMassPosition();
-		if (p0.y() <= -75)
+		if (p0.y() <= -75 || p0.y()>=300)
 		{
 			ChangeMap();
 			rigidBody->setWorldTransform(spawn);
+			rigidBody->setAngularVelocity(btVector3(0,0,0));
+			rigidBody->setLinearVelocity(btVector3(0, 0, 0));
 			p0 = (btVector3(0, 1, 10));
 		}
 		
@@ -356,7 +389,17 @@ int main( void )
 			nbFrames = 0;
 			lastTime += 1.0;
 		}
+		dynamicsWorld->performDiscreteCollisionDetection();
+		Collision_CallbackRing checker; 
+		Collision_CallbackTarget checker2;
 
+		//dynamicsWorld->contactTest(rigidBody,checker);
+		
+		dynamicsWorld->contactPairTest(rigidBody, rigidBody3, checker2);
+		dynamicsWorld->contactPairTest(rigidBody, rigidBody4, checker2);
+		dynamicsWorld->contactPairTest(rigidBody, rigidBody5, checker2);
+		dynamicsWorld->contactPairTest(rigidBody, rigidBody6, checker);
+		dynamicsWorld->contactPairTest(rigidBody, rigidBody7, checker);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -369,14 +412,7 @@ int main( void )
 		sprintf(text1,"Level: %i", mapNum );
 		sprintf(text2,"%i", monkey.points);
 
-		if (monkey.points == 100)
-		{
-			dynamicsWorld->removeRigidBody(rigidBody7);
-		}
-		if (monkey.points == 200)
-		{
-			dynamicsWorld->removeRigidBody(rigidBody6);
-		}
+	
 		printText2D(text1, 500, 500, 30);
 		printText2D(text2, 600, 1040, 30);
 

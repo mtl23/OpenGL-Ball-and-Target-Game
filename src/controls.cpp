@@ -10,9 +10,10 @@ using namespace glm;
 #include "controls.hpp"
 #include "simple_logger.h";
 #include "player.h"
-
+#include "Physics.h"
 extern Player_S monkey;
 extern Player_S map;
+extern 	btRigidBody *rigidBody2;
 glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
 
@@ -46,22 +47,18 @@ void computeMatricesFromInputs(){
 	// glfwGetTime is called only once, the first time this function is called
 	static double lastTime = glfwGetTime();
 
-	// Compute time difference between current and last frame
+
 	double currentTime = glfwGetTime();
 	float deltaTime = float(currentTime - lastTime);
-
-	// Get mouse position
 	double xpos, ypos;
 	 glfwGetCursorPos(window, &xpos, &ypos);
-	// Reset mouse position for next frame
+
 	 glfwSetCursorPos(window, 1024/2, 768/2);
 
-	// Compute new orientation
+
 	horizontalAngle += mouseSpeed * float(1024/2 - xpos );
 	verticalAngle   += mouseSpeed * float( 768/2 - ypos );
-	//slog("%f", verticalAngle);
 
-	// Direction : Spherical coordinates to Cartesian coordinates conversion
 	glm::vec3 direction(
 		cos(verticalAngle) * sin(horizontalAngle), 
 		sin(verticalAngle),
@@ -80,20 +77,59 @@ void computeMatricesFromInputs(){
 
 	// tilt forward
 	if (glfwGetKey( window, GLFW_KEY_UP ) == GLFW_PRESS){
-		//position += direction * deltaTime * speed;
+		rigidBody2->setMotionState(new btDefaultMotionState(btTransform(
+			btQuaternion(.70, -.13, -.69, .13),
+			btVector3(0, -12, -15))));
+		btQuaternion O0 = rigidBody2->getOrientation();
+
+		btVector3 p0 = rigidBody2->getCenterOfMassPosition();
+
+		BTVEC32GLMVEC3(map.Ent->model->position, p0);
+		BTQUAT2GLMQUAT(map.Ent->model->orientation, O0);
+	
 	}
 	// tilt backward
 	if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
-		//position -= direction * deltaTime * speed;
+		rigidBody2->setMotionState(new btDefaultMotionState(btTransform(
+			btQuaternion(.68, -0.01, -0.74, 0.03 ),
+			btVector3(0, -6, -15))));
+		btQuaternion O0 = rigidBody2->getOrientation();
+
+		btVector3 p0 = rigidBody2->getCenterOfMassPosition();
+
+		BTVEC32GLMVEC3(map.Ent->model->position, p0);
+		BTQUAT2GLMQUAT(map.Ent->model->orientation, O0);
+
 	}
 	// tilt right
 	if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS){
-		//position += right * deltaTime * speed;
+
+			rigidBody2->setMotionState(new btDefaultMotionState(btTransform(
+				btQuaternion(.71, -.06, -.71, .03),
+				btVector3(0, -8, -15))));
+			btQuaternion O0 = rigidBody2->getOrientation();
+
+			btVector3 p0 = rigidBody2->getCenterOfMassPosition();
+
+			BTVEC32GLMVEC3(map.Ent->model->position, p0);
+			BTQUAT2GLMQUAT(map.Ent->model->orientation, O0);
 	}
 	// tilt left
 	if (glfwGetKey( window, GLFW_KEY_LEFT ) == GLFW_PRESS){
-		//position -= right * deltaTime * speed;
+
+		rigidBody2->setMotionState(new btDefaultMotionState(btTransform(
+			btQuaternion(.71, -.06, -.71, .12),
+			btVector3(0, -8, -15))));
+		btQuaternion O0 = rigidBody2->getOrientation();
+
+		btVector3 p0 = rigidBody2->getCenterOfMassPosition();
+
+		BTVEC32GLMVEC3(map.Ent->model->position, p0);
+		BTQUAT2GLMQUAT(map.Ent->model->orientation, O0);
 	}
+
+
+
 
 	float FoV = initialFoV;
 
