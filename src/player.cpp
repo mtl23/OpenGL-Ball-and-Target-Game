@@ -9,12 +9,13 @@
 #include "player.h"
 
 btQuaternion targetRot = btQuaternion(0.71f, 0.00f, -0.71f, 0.00f);
-
+extern int givenpts;
 extern Player_S target1;
 extern Player_S target2;
 extern Player_S target3;
 extern	Player_S ring1;
 extern	Player_S ring2;
+extern btRigidBody *rigidBody;
 extern btRigidBody *rigidBody3;
 extern btRigidBody *rigidBody4;
 extern btRigidBody *rigidBody5;
@@ -25,6 +26,8 @@ extern btVector3 t2;
 extern btVector3 t3;
 extern btDiscreteDynamicsWorld* dynamicsWorld;
 int mapNum;
+btTransform spawn;
+
 Player_S* newPlayer(char* path,char* texture, glm::vec3 position,glm::vec3 scale, glm::quat orientation) 
 {
 	Player_S User;
@@ -42,6 +45,18 @@ Player_S* newPlayer(char* path,char* texture, glm::vec3 position,glm::vec3 scale
 	User.Ent->model->scale = scale;
 
 return &User;
+}
+
+void restart(Player_S* p1)
+{
+	rigidBody->setAngularVelocity(btVector3(0, 0, 0));
+	rigidBody->setLinearVelocity(btVector3(0, 0, 0));
+	if (givenpts==0){
+		p1->points += 500;
+		givenpts = 1;
+		}
+
+
 }
 
 void Pickup(Player_S* p1)
@@ -126,6 +141,11 @@ void ChangeMap()
 	 ));
 	 ring2.Ent->model->position = glm::vec3(-5,-8,-20);
 
+	 rigidBody->setWorldTransform(spawn);
+	 rigidBody->setAngularVelocity(btVector3(0, 0, 0));
+	 rigidBody->setLinearVelocity(btVector3(0, 0, 0));
+
+	 givenpts = 0;
 	 return;
  }
 

@@ -45,5 +45,5 @@ void freePlayer(Entity_S player);
  */
 
 void Pickup(Player_S* p1);
-
+void restart(Player_S* p1);
 #endif

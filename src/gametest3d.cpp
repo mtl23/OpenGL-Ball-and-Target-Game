@@ -21,6 +21,7 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/norm.hpp>
 #include <lodepng.h>
+#include<SOIL.h>
 
 using namespace glm;
 
@@ -37,18 +38,7 @@ using namespace glm;
 
 #include "Physics.h"
 
-struct Collision_CallbackTarget : btCollisionWorld::ContactResultCallback {
 
-	virtual btScalar addSingleResult(btManifoldPoint& cp,
-		const btCollisionObjectWrapper* colObj0, int partId0, int index0,
-		const btCollisionObjectWrapper* colObj1, int partId1, int index1)
-	{
-
-		
-		slog("collision with target");
-		return 0;
-	}
-};
 
 
 
@@ -57,7 +47,7 @@ struct Collision_CallbackTarget : btCollisionWorld::ContactResultCallback {
 //							(GLM).z = (BT).z(); \
 //							(GLM).w = (BT).w(); 
 
-
+	int givenpts;
 	extern int entityMax;
 	GLFWwindow* window;
 	GLuint programID;
@@ -98,6 +88,22 @@ struct Collision_CallbackTarget : btCollisionWorld::ContactResultCallback {
 		}
 	};
 
+	struct Collision_CallbackTarget : btCollisionWorld::ContactResultCallback {
+
+		virtual btScalar addSingleResult(btManifoldPoint& cp,
+			const btCollisionObjectWrapper* colObj0, int partId0, int index0,
+			const btCollisionObjectWrapper* colObj1, int partId1, int index1)
+		{
+
+
+			slog("collision with target");
+			restart(&monkey);
+			return 0;
+			
+		}
+	};
+
+
 	class BulletDebugDrawer_DeprecatedOpenGL : public btIDebugDraw {
 	public:
 		void SetMatrices(glm::mat4 pViewMatrix, glm::mat4 pProjectionMatrix) {
@@ -131,7 +137,10 @@ struct Collision_CallbackTarget : btCollisionWorld::ContactResultCallback {
 			if( action ==GLFW_PRESS)
 				{
 				slog("Pressed Enter");
-		
+				if (givenpts == 1) 
+				{
+					ChangeMap();
+				}
 				}
 	   }
 
@@ -172,6 +181,7 @@ int main( void )
 	InitEntitySystem(entityMax);
 	initModelSystem();
 
+	givenpts = 0;
 	mapNum = 1;
 
 	//Build the broadphase
@@ -345,6 +355,13 @@ int main( void )
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 	
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	int width, height;
+	unsigned char* image;
+
 
 	initText2D( "Holstein.DDS" );
 
@@ -360,10 +377,10 @@ int main( void )
 		if (p0.y() <= -75 || p0.y()>=300)
 		{
 			ChangeMap();
-			rigidBody->setWorldTransform(spawn);
-			rigidBody->setAngularVelocity(btVector3(0,0,0));
-			rigidBody->setLinearVelocity(btVector3(0, 0, 0));
-			p0 = (btVector3(0, 1, 10));
+			//rigidBody->setWorldTransform(spawn);
+			////rigidBody->setAngularVelocity(btVector3(0,0,0));
+			//rigidBody->setLinearVelocity(btVector3(0, 0, 0));
+			////p0 = (btVector3(0, 1, 10));
 		}
 		
 		BTVEC32GLMVEC3(monkey.Ent->model->position, p0);
