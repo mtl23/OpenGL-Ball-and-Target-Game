@@ -27,7 +27,7 @@ extern btDiscreteDynamicsWorld* dynamicsWorld;
 class BulletDebugDrawer_DeprecatedOpenGL : public btIDebugDraw {
 public:
 	void SetMatrices(glm::mat4 pViewMatrix, glm::mat4 pProjectionMatrix) {
-		glUseProgram(0); // Use Fixed-function pipeline (no shaders)
+		glUseProgram(0); 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(&pViewMatrix[0][0]);
 		glMatrixMode(GL_PROJECTION);
@@ -143,7 +143,7 @@ Model_S* newModel( const char * path, const char * texture )
 	indexVBO(modelList[i].vertices, modelList[i].uvs, modelList[i].normals, modelList[i].indices, modelList[i].indexed_vertices, modelList[i].indexed_uvs, modelList[i].indexed_normals);
 
 
-	// Load it into a VBO
+	
 	glGenBuffers(1, &modelList[i].vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, modelList[i].vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, modelList[i].indexed_vertices.size() * sizeof(glm::vec3), &modelList[i].indexed_vertices[0], GL_STATIC_DRAW);
@@ -159,15 +159,12 @@ Model_S* newModel( const char * path, const char * texture )
 	glBufferData(GL_ARRAY_BUFFER, modelList[i].indexed_normals.size() * sizeof(glm::vec3), &modelList[i].indexed_normals[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
-	// Generate a buffer for the indices as well
 	glGenBuffers(1, &modelList[i].elementbuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, modelList[i].elementbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, modelList[i].indices.size() * sizeof(unsigned short), &modelList[i].indices[0] , GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
-	//if (i==2) {
-	//	modelList[i].offset = glm::vec3(0, -2, 0);
-	//}
+	
 	modelList[i].Texture = loadBMP_custom(texture);
 
 	return &modelList[i];
@@ -176,7 +173,7 @@ Model_S* newModel( const char * path, const char * texture )
 
 void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat orientation)
 {
-	// Get a handle for our "MVP" uniform
+	
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
 	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
@@ -184,32 +181,19 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 		glm::mat4 ProjectionMatrix = getProjectionMatrix();
 		glm::mat4 ViewMatrix = getViewMatrix();
 
-	// Get a handle for our "myTextureSampler" uniform
+	
 	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler"); 
 
 
-		// Bind our texture in Texture Unit 0
+	
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, model->Texture);
-		// Set our "myTextureSampler" sampler to user Texture Unit 0
 		glUniform1i(model->Texture, 0);
-//		glm::mat4 ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-		//	glm::mat4 ViewMatrix = glm::lookAt(
-		//	glm::vec3( 0, 20, 37 ), // Camera is here
-		//	glm::vec3( 0, 0, 0 ), // and looks here
-		//	glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
-		//);
-
-			// Get a handle for our "LightPosition" uniform
-/*	glUseProgram(programID);*/ //not here
-//	glEnable(GL_BLEND); //blend mode mode is set afetr you choose a shader
-//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
 	GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 	glm::vec3 lightPos = glm::vec3(3,55, 5);
 	glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
-// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, model->vertexbuffer);
 		glVertexAttribPointer(
@@ -245,7 +229,7 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 			(void*)0                          // array buffer offset
 		);
 
-		// Index buffer
+	
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->elementbuffer);
 
 		glm::mat4 RotationMatrix = mat4_cast(model->orientation);
@@ -254,19 +238,18 @@ void drawModel(Model_S* model ,GLFWwindow* window, glm::vec3 position, glm::quat
 		glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScalingMatrix;
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
  
-			// Send our transformation to the currently bound shader, 
-			// in the "MVP" uniform
+			
 			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 			glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 			glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
  
  
-			// Draw the triangles !
+			
 			glDrawElements(
-				GL_TRIANGLES,      // mode
-				model->indices.size(),// count
-				GL_UNSIGNED_SHORT,   // type
-				(void*)0           // element array buffer offset
+				GL_TRIANGLES,      
+				model->indices.size(),
+				GL_UNSIGNED_SHORT,   
+				(void*)0           
 			);
 
 		glDisableVertexAttribArray(0);

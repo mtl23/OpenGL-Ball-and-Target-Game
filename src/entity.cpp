@@ -89,7 +89,7 @@ Entity_S* EntityNew()
 
 void entityFree(Entity_S **entity)
 {
-//	freeModel((*entity)->model);
+
 	(*entity)->inuse= 0;
 	*entity = NULL;
   

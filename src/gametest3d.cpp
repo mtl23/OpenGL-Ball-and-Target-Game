@@ -1,18 +1,14 @@
-// Include standard headers
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
 #include<iostream>
-//#include<btBulletCollisionCommon.h>
-//#include<btBulletDynamicsCommon.h>
-// Include GLEW
 #include <glew.h>
 
-// Include GLFW
+
 #include <glfw3.h>
 #include <btBulletDynamicsCommon.h>
 #include <btBulletCollisionCommon.h>
-// Include GLM
+
 #include <SDL_mixer.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -38,15 +34,6 @@ using namespace glm;
 
 #include "Physics.h"
 
-
-
-
-
-//#define BTQUAT2GLMQUAT(GLM,BT) (GLM).x = (BT).x(); \
-//							(GLM).y = (BT).y(); \
-//							(GLM).z = (BT).z(); \
-//							(GLM).w = (BT).w(); 
-
 	int givenpts;
 	extern int entityMax;
 	GLFWwindow* window;
@@ -58,6 +45,7 @@ using namespace glm;
 	Player_S target2;
 	Player_S target3;
 
+	
 	Player_S map;
 	Player_S monkey;
 	btRigidBody *rigidBody;
@@ -73,6 +61,7 @@ using namespace glm;
 	int points = 0;
 	int touch = 0;
 	extern int mapNum;
+	int Pround;
 
 
 	struct Collision_CallbackRing : btCollisionWorld::ContactResultCallback {
@@ -81,7 +70,7 @@ using namespace glm;
 			const btCollisionObjectWrapper* colObj0, int partId0, int index0,
 			const btCollisionObjectWrapper* colObj1, int partId1, int index1)
 		{
-			//slog("%i", colObj1->getCollisionObject()->getCompanionId());
+			
 			slog("collision with ring ");
 			Pickup(&monkey);
 			return 0;
@@ -139,6 +128,7 @@ using namespace glm;
 				slog("Pressed Enter");
 				if (givenpts == 1) 
 				{
+					Pround++;
 					ChangeMap();
 				}
 				}
@@ -154,10 +144,9 @@ using namespace glm;
 	    
 }
 
-
 int main( void )
 {
-
+	
 //	Initialize SDL_mixer
     if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
                 {
@@ -183,18 +172,16 @@ int main( void )
 
 	givenpts = 0;
 	mapNum = 1;
-
-	//Build the broadphase
+	 Pround = 1;
 	btBroadphaseInterface* broadphase = new btDbvtBroadphase();
 
-	//Set up the collision configuration and dispatcher
 	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
 	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
 
-	//The actual physics solver
+
 	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
 
-	//The world.
+
 	btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 	dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
 
@@ -372,20 +359,18 @@ int main( void )
 	do{
 
 		btQuaternion O0 = rigidBody->getOrientation();
-
 		btVector3 p0 = rigidBody->getCenterOfMassPosition();
-		if (p0.y() <= -75 || p0.y()>=300)
-		{
-			ChangeMap();
-			//rigidBody->setWorldTransform(spawn);
-			////rigidBody->setAngularVelocity(btVector3(0,0,0));
-			//rigidBody->setLinearVelocity(btVector3(0, 0, 0));
-			////p0 = (btVector3(0, 1, 10));
-		}
 		
 		BTVEC32GLMVEC3(monkey.Ent->model->position, p0);
+		BTQUAT2GLMQUAT(monkey.Ent->model->orientation, O0);
 
-		BTQUAT2GLMQUAT(monkey.Ent->model->orientation,O0);
+		if (p0.y() <= -75 || p0.y()>=400)
+		{
+			ChangeMap();
+			Pround++;
+		}
+		
+				
 		programID = LoadShaders("shaders/StandardShading.vertexshader", "shaders/StandardTransparentShading.fragmentshader");
 		glUseProgram(programID);
 		double currentTime = glfwGetTime();
@@ -425,24 +410,44 @@ int main( void )
 		
 		char text1[256];
 		char text2[256];
-	
+		char text3[256];
+		char text4[256];
+
 		sprintf(text1,"Level: %i", mapNum );
 		sprintf(text2,"%i", monkey.points);
+		sprintf(text3, "Round: %i", Pround);
 
 	
 		printText2D(text1, 500, 500, 30);
 		printText2D(text2, 600, 1040, 30);
+		printText2D(text3, 400, 1020, 30);
 
 		glm::mat4 ProjectionMatrix = getProjectionMatrix();
 		glm::mat4 ViewMatrix = getViewMatrix();
 		mydebugdrawer.SetMatrices(ViewMatrix, ProjectionMatrix);
 		dynamicsWorld->debugDrawWorld();
+
+		if(Pround <10)
 		dynamicsWorld->stepSimulation(deltaTime, 1);
-		// Swap buffers
+		
+		if (Pround >= 10)
+		{
+		
+			if (monkey.points >= 3000) {
+				sprintf(text4, "You Win");
+				printText2D(text4, 100, 1020, 30);
+			}
+			else if (monkey.points < 3000) {
+				sprintf(text4, "You Lose");
+				printText2D(text4, 100, 1020, 30);
+			}
+
+		}
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
-	} // Check if the ESC key was pressed or the window was closed
+	} 
 	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
 		   glfwWindowShouldClose(window) == 0 );
 	

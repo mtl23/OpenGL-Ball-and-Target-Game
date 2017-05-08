@@ -7,15 +7,20 @@
 #include "vector.h"
 #include "model.h"
 #include "player.h"
+#include "Physics.h"
 
 btQuaternion targetRot = btQuaternion(0.71f, 0.00f, -0.71f, 0.00f);
 extern int givenpts;
 extern Player_S target1;
+
+extern int Pround;
 extern Player_S target2;
 extern Player_S target3;
+extern Player_S map;
 extern	Player_S ring1;
 extern	Player_S ring2;
 extern btRigidBody *rigidBody;
+extern btRigidBody *rigidBody2;
 extern btRigidBody *rigidBody3;
 extern btRigidBody *rigidBody4;
 extern btRigidBody *rigidBody5;
@@ -43,7 +48,7 @@ Player_S* newPlayer(char* path,char* texture, glm::vec3 position,glm::vec3 scale
 	User.Ent->model->orientation = orientation;
 	User.Ent->model->position = position;
 	User.Ent->model->scale = scale;
-
+	
 return &User;
 }
 
@@ -54,7 +59,21 @@ void restart(Player_S* p1)
 	if (givenpts==0){
 		p1->points += 500;
 		givenpts = 1;
-		}
+		
+
+		rigidBody2->setMotionState(new btDefaultMotionState(btTransform(
+			btQuaternion(-.06, -.71, .08, .71),
+			btVector3(0, -9, -15))));
+		btQuaternion O0 = rigidBody2->getOrientation();
+
+		btVector3 p0 = rigidBody2->getCenterOfMassPosition();
+
+		BTVEC32GLMVEC3(map.Ent->model->position, p0);
+		BTQUAT2GLMQUAT(map.Ent->model->orientation, O0);
+	
+	}
+	
+
 
 
 }
@@ -64,7 +83,7 @@ void Pickup(Player_S* p1)
 	
 	p1->points += 100;
 	
-	if (p1->Ent->model->position.x <= 0)  // if(p1->Ent->model->position.x <= 0)
+	if (p1->Ent->model->position.x <= 0)  
 	{
 		ring2.Ent->model->position.y = 570;
 		ring2.Ent->model->position.z = 50; 
@@ -74,7 +93,7 @@ void Pickup(Player_S* p1)
 		));
 	}
 
-	if (p1->Ent->model->position.x >= 0) // if(p1->Ent->model->position.x >= 0)
+	if (p1->Ent->model->position.x >= 0) 
 	{
 	ring1.Ent->model->position.z = 50;
 	ring1.Ent->model->position.y = 570;
@@ -129,6 +148,17 @@ void ChangeMap()
 		 }
 
 
+	 rigidBody2->setMotionState(new btDefaultMotionState(btTransform(
+		 btQuaternion(-.06, -.71, .08, .71),
+		 btVector3(0, -9, -15))));
+	 btQuaternion O0 = rigidBody2->getOrientation();
+
+	 btVector3 p0 = rigidBody2->getCenterOfMassPosition();
+
+	 BTVEC32GLMVEC3(map.Ent->model->position, p0);
+	 BTQUAT2GLMQUAT(map.Ent->model->orientation, O0);
+
+
 	 rigidBody7->setWorldTransform(btTransform(
 		 btQuaternion(0.71f, 0.00f, -0.71f, 0.00f),
 		 btVector3(5, -8, -20)
@@ -153,7 +183,7 @@ void freePlayer(Entity_S *player)
 {
 	
 	entityFree(&player);
-	//&player->points = 0;
+	
 	return;
 }
 
